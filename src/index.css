@@ -1,0 +1,98 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+
+  --color-sand: #D8B892;
+  --color-rust: #A65E2E;
+  --color-walnut: #4E342E;
+  --color-ivory: #F8F5F0;
+  --color-stone: #8B857C;
+  --color-sand-light: #EDD9BC;
+  --color-rust-dark: #7A4420;
+  --color-walnut-dark: #3A2420;
+  --color-walnut-light: #6D4C41;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #F8F5F0;
+  color: #4E342E;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8B892;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A65E2E;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-12px) rotate(1deg); }
+  66% { transform: translateY(-6px) rotate(-1deg); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.shadow-warm {
+  box-shadow: 0 4px 24px rgba(78, 52, 46, 0.10);
+}
+
+.shadow-warm-lg {
+  box-shadow: 0 8px 40px rgba(78, 52, 46, 0.15);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #A65E2E 0%, #4E342E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.museum-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.museum-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(78, 52, 46, 0.18);
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #EDD9BC 25%, #F8F5F0 50%, #EDD9BC 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

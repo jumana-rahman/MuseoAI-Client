@@ -147,7 +147,7 @@ function NavLink({ to, label, textColor }: { to: string; label: string; textColo
   return (
     <Link
       to={to}
-      className={`text-sm font-medium transition-opacity hover:opacity-80 ${textColor} ${active ? "opacity-100 border-b-2 border-[#D8B892] pb-0.5" : "opacity-80"}`}
+      className={`text-sm font-medium transition-opacity hover:opacity-80 ${textColor} ${active ? "opacity-100" : "opacity-80"}`}
     >
       {label}
     </Link>

@@ -181,7 +181,7 @@ export default function Museums() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="w-9 h-9 rounded-xl bg-white border border-[#EDD9BC] flex items-center justify-center text-[#4E342E] disabled:opacity-40 hover:border-[#D8B892] transition-colors shadow-warm"
+              className="w-9 h-9 rounded-xl bg-white border border-[#EDD9BC] flex items-center justify-center text-[#4E342E] disabled:opacity-40 hover:border-[#D8B892] hover:bg-[#EDD9BC]/50 hover:scale-105 active:scale-95 transition-all duration-200 ease-out shadow-warm cursor-pointer disabled:cursor-not-allowed"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -189,7 +189,11 @@ export default function Museums() {
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-9 h-9 rounded-xl text-sm font-medium transition-colors shadow-warm ${p === page ? "bg-[#4E342E] text-[#F8F5F0]" : "bg-white border border-[#EDD9BC] text-[#4E342E] hover:border-[#D8B892]"}`}
+                className={`w-9 h-9 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ease-out shadow-warm ${
+                  p === page
+                    ? "bg-[#4E342E] text-[#F8F5F0] scale-105 shadow-warm-lg"
+                    : "bg-white border border-[#EDD9BC] text-[#4E342E] hover:border-[#D8B892] hover:bg-[#EDD9BC]/50 hover:scale-105 active:scale-95"
+                }`}
               >
                 {p}
               </button>
@@ -197,7 +201,7 @@ export default function Museums() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="w-9 h-9 rounded-xl bg-white border border-[#EDD9BC] flex items-center justify-center text-[#4E342E] disabled:opacity-40 hover:border-[#D8B892] transition-colors shadow-warm"
+              className="w-9 h-9 rounded-xl bg-white border border-[#EDD9BC] flex items-center justify-center text-[#4E342E] disabled:opacity-40 hover:border-[#D8B892] hover:bg-[#EDD9BC]/50 hover:scale-105 active:scale-95 transition-all duration-200 ease-out shadow-warm cursor-pointer disabled:cursor-not-allowed"
             >
               <ChevronRight className="w-4 h-4" />
             </button>

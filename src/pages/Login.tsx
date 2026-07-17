@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Landmark, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 
 export default function Login() {
   const { login, loginDemo, loginGoogle } = useAuth();
@@ -64,7 +65,13 @@ export default function Login() {
 
       {/* Right: form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-sm"
+        >
           <div className="flex items-center gap-2 mb-8 lg:hidden">
             <div className="w-8 h-8 bg-[#D8B892] rounded-lg flex items-center justify-center">
               <Landmark className="w-4 h-4 text-[#4E342E]" />
@@ -141,7 +148,7 @@ export default function Login() {
             Don't have an account?{" "}
             <Link to="/register" className="text-[#A65E2E] font-medium hover:underline">Register</Link>
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );

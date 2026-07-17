@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { MUSEUMS } from "../data/museums";
 import MuseumCard from "../components/MuseumCard";
+import { motion } from "framer-motion";
 
 const COUNTRIES = ["All", ...Array.from(new Set(MUSEUMS.map((m) => m.country))).sort()];
 const CATEGORIES = ["All", "Art", "History", "Archaeology", "Science", "Military", "Technology", "Children's Museum", "Natural History"];
@@ -90,7 +91,13 @@ export default function Museums() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+      >
         {/* Filters bar */}
         <div className="flex flex-wrap gap-3 items-center justify-between mb-6">
           <div className="flex flex-wrap gap-2 items-center">
@@ -207,7 +214,7 @@ export default function Museums() {
             </button>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

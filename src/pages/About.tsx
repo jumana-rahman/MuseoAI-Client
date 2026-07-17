@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Sparkles, MessageCircle, Map, Heart, Award, Globe, BookOpen } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function About() {
   return (
@@ -19,6 +20,7 @@ export default function About() {
       </div>
 
       {/* Mission */}
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }}>
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
@@ -44,10 +46,11 @@ export default function About() {
           </div>
         </div>
       </section>
+      </motion.div>
 
       {/* Values */}
       <section className="py-20 bg-[#4E342E]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
             <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-2">What We Stand For</p>
             <h2 className="font-display text-3xl text-[#F8F5F0] font-bold">Our Values</h2>
@@ -65,10 +68,11 @@ export default function About() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features */}
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }}>
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <div className="text-center mb-12">
           <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Platform</p>
@@ -91,9 +95,11 @@ export default function About() {
           ))}
         </div>
       </section>
+      </motion.div>
 
       {/* CTA */}
       <section className="py-16 bg-[#EDD9BC] text-center px-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }}>
         <h2 className="font-display text-3xl text-[#4E342E] font-bold mb-3">Ready to start exploring?</h2>
         <p className="text-[#5D4037] mb-8">Discover curated museums and plan your next cultural journey.</p>
         <div className="flex justify-center gap-3">
@@ -104,6 +110,7 @@ export default function About() {
             Create Account
           </Link>
         </div>
+        </motion.div>
       </section>
     </div>
   );

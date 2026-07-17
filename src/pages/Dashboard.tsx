@@ -7,6 +7,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { MUSEUMS } from "../data/museums";
 import { GUIDES } from "../data/guides";
+import { motion } from "framer-motion";
 
 const AUDIENCES = ["Families", "Students", "Tourists", "Researchers", "Art Lovers"];
 const INTERESTS = ["Paintings", "Sculptures", "Ancient History", "Modern Art", "Architecture", "Science", "Culture", "War History"];
@@ -85,14 +86,20 @@ export default function Dashboard() {
           )}
 
           {/* Main */}
-          <main className="flex-1 min-w-0">
+          <motion.main
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6 }}
+            className="flex-1 min-w-0"
+          >
             <Routes>
               <Route index element={<Overview />} />
               <Route path="add-guide" element={<AddGuide />} />
               <Route path="my-guides" element={<MyGuides />} />
               <Route path="profile" element={<ProfileSettings />} />
             </Routes>
-          </main>
+          </motion.main>
         </div>
       </div>
     </div>

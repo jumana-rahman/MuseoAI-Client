@@ -12,6 +12,7 @@ import { MUSEUMS, CATEGORIES, STATS_BY_CATEGORY, STATS_BY_COUNTRY, POPULAR_COUNT
 import { GUIDES } from "../data/guides";
 import MuseumCard from "../components/MuseumCard";
 import { useAuth } from "../context/AuthContext";
+import { motion } from "framer-motion";
 
 const FEATURED = MUSEUMS.filter((m) => m.featured).slice(0, 8);
 const COLORS = ["#D8B892", "#A65E2E", "#4E342E", "#8B857C", "#EDD9BC", "#6D4C41", "#C9A67D", "#7A4420"];
@@ -39,7 +40,7 @@ export default function Home() {
   return (
     <div className="bg-[#F8F5F0]">
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative min-h-[65vh] flex items-center overflow-hidden">
+      <section ref={heroRef} className="sticky top-0 min-h-[65vh] flex items-center overflow-hidden z-0">
         <div className="absolute inset-0 bg-[#3A2420]">
           <img
             src="https://images.unsplash.com/photo-1572947650440-e8a97ef053b2?w=1600&h=900&fit=crop&auto=format"
@@ -63,7 +64,13 @@ export default function Home() {
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16"
+        >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left: copy */}
             <div>
@@ -128,7 +135,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Scroll indicator */}
         <button
@@ -140,26 +147,39 @@ export default function Home() {
       </section>
 
       {/* ── Featured Museums ── */}
-      <section id="featured-museums" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="flex items-end justify-between mb-12">
-          <div>
-            <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Curated Collection</p>
-            <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Featured Museums</h2>
+      <section id="featured-museums" className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto rounded-t-3xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Curated Collection</p>
+              <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Featured Museums</h2>
+            </div>
+            <Link to="/museums" className="hidden sm:flex items-center gap-1 text-[#A65E2E] text-sm font-medium hover:gap-2 transition-all">
+              View all <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-          <Link to="/museums" className="hidden sm:flex items-center gap-1 text-[#A65E2E] text-sm font-medium hover:gap-2 transition-all">
-            View all <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURED.map((m) => (
-            <MuseumCard key={m.id} museum={m} />
-          ))}
-        </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {FEATURED.map((m) => (
+              <MuseumCard key={m.id} museum={m} />
+            ))}
+          </div>
+        </motion.div>
       </section>
 
       {/* ── Categories ── */}
-      <section className="py-20 bg-[#4E342E]" id="features">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20 bg-[#4E342E]" id="features">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="text-center mb-12">
             <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-2">Browse by Type</p>
             <h2 className="font-display text-3xl sm:text-4xl text-[#F8F5F0] font-bold">Explore by Category</h2>
@@ -177,15 +197,21 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Why MuseoAI ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center mb-14">
-          <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Why Choose Us</p>
-          <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Why Choose MuseoAI</h2>
-        </div>
+      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="text-center mb-14">
+            <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Why Choose Us</p>
+            <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Why Choose MuseoAI</h2>
+          </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             {
@@ -218,11 +244,18 @@ export default function Home() {
             </div>
           ))}
         </div>
+        </motion.div>
       </section>
 
       {/* ── Popular Destinations ── */}
-      <section className="py-20 bg-[#F0EBE3]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20 bg-[#F0EBE3]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="text-center mb-12">
             <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Around the World</p>
             <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Popular Destinations</h2>
@@ -243,15 +276,21 @@ export default function Home() {
               </Link>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Stats Charts ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Museum Insights</p>
-          <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Collection at a Glance</h2>
-        </div>
+      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="text-center mb-12">
+            <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Museum Insights</p>
+            <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Collection at a Glance</h2>
+          </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="bg-white rounded-2xl p-6 shadow-warm border border-[#EDD9BC]">
             <h3 className="font-display text-[#4E342E] font-semibold text-lg mb-6">Museums by Category</h3>
@@ -294,12 +333,18 @@ export default function Home() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Community Guides ── */}
-      <section className="py-20 bg-[#4E342E]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20 bg-[#4E342E]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="flex items-end justify-between mb-12">
             <div>
               <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-2">Community</p>
@@ -338,15 +383,21 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Loved by Explorers</p>
-          <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">What Our Community Says</h2>
-        </div>
+      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="text-center mb-12">
+            <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Loved by Explorers</p>
+            <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">What Our Community Says</h2>
+          </div>
         <div className="relative">
           <div className="bg-white rounded-2xl p-8 shadow-warm border border-[#EDD9BC] text-center max-w-2xl mx-auto">
             <div className="flex justify-center gap-1 mb-4">
@@ -381,11 +432,18 @@ export default function Home() {
             </button>
           </div>
         </div>
+        </motion.div>
       </section>
 
       {/* ── FAQ ── */}
-      <section className="py-20 bg-[#F0EBE3]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative z-10 py-20 bg-[#F0EBE3]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
           <div className="text-center mb-12">
             <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Questions & Answers</p>
             <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Frequently Asked Questions</h2>
@@ -408,12 +466,18 @@ export default function Home() {
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* ── Newsletter ── */}
-      <section className="py-20 bg-[#4E342E]">
-        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="relative z-10 py-20 bg-[#4E342E]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6 }}
+          className="max-w-xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+        >
           <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-3">Stay Connected</p>
           <h2 className="font-display text-3xl sm:text-4xl text-[#F8F5F0] font-bold mb-4">
             Get Museum Dispatches
@@ -446,7 +510,7 @@ export default function Home() {
               </button>
             </form>
           )}
-        </div>
+        </motion.div>
       </section>
     </div>
   );

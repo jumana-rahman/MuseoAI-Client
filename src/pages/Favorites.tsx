@@ -3,6 +3,7 @@ import { Heart } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { MUSEUMS } from "../data/museums";
 import MuseumCard from "../components/MuseumCard";
+import { motion } from "framer-motion";
 
 export default function Favorites() {
   const { user, favorites } = useAuth();
@@ -31,7 +32,13 @@ export default function Favorites() {
         <p className="text-[#8B857C]">{favoriteMuseums.length} saved museum{favoriteMuseums.length !== 1 ? "s" : ""}</p>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+      >
         {favoriteMuseums.length === 0 ? (
           <div className="text-center py-20">
             <Heart className="w-12 h-12 text-[#D8B892] mx-auto mb-4" />
@@ -46,7 +53,7 @@ export default function Favorites() {
             {favoriteMuseums.map((m) => <MuseumCard key={m.id} museum={m} />)}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

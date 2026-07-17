@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Mail, MapPin, Clock, MessageSquare, Send } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -30,7 +31,7 @@ export default function Contact() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6 }} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* Contact info */}
           <div className="space-y-5">
@@ -118,7 +119,7 @@ export default function Contact() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

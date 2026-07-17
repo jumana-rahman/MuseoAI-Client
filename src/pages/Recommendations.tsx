@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Sparkles, RefreshCw, Star, MapPin, Ticket, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { MUSEUMS } from "../data/museums";
+import { motion } from "framer-motion";
 
 
 const INTERESTS = ["Art & Painting", "Ancient History", "Science & Technology", "Natural History", "Military History", "Architecture", "World Cultures", "Modern Art"];
@@ -84,7 +85,13 @@ export default function Recommendations() {
         <p className="text-[#8B857C] max-w-md mx-auto">Tell us about your preferences and our AI will match you with museums from our curated directory.</p>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
+      >
         {/* Input form */}
         <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-6 mb-8">
           <h2 className="font-display text-[#4E342E] font-semibold text-lg mb-5">Your Preferences</h2>
@@ -186,7 +193,7 @@ export default function Recommendations() {
             ))}
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

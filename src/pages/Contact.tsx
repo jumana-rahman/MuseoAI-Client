@@ -17,12 +17,17 @@ export default function Contact() {
   return (
     <div className="min-h-screen bg-[#F8F5F0] pt-16">
       {/* Header */}
-      <div className="bg-[#4E342E] py-20 px-4 sm:px-6 lg:px-8 text-center">
-        <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-3">Get in Touch</p>
-        <h1 className="font-display text-4xl sm:text-5xl text-[#F8F5F0] font-bold mb-4">Contact Us</h1>
-        <p className="text-[#8B857C] max-w-lg mx-auto">
-          Have a question, suggestion, or partnership inquiry? We'd love to hear from you.
-        </p>
+      <div className="relative bg-[#4E342E] py-20 px-4 sm:px-6 lg:px-8 text-center overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img src="https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=1600&h=600&fit=crop&auto=format" alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="relative">
+          <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-3">Get in Touch</p>
+          <h1 className="font-display text-4xl sm:text-5xl text-[#F8F5F0] font-bold mb-4">Contact Us</h1>
+          <p className="text-[#8B857C] max-w-lg mx-auto">
+            Have a question, suggestion, or partnership inquiry? We'd love to hear from you.
+          </p>
+        </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">

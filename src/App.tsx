@@ -21,13 +21,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
-  const noFooter = ["/login", "/register"].includes(location.pathname);
   return (
     <>
       <Navbar />
       <main>{children}</main>
-      {!noFooter && <Footer />}
+      <Footer />
     </>
   );
 }

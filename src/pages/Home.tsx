@@ -43,8 +43,23 @@ export default function Home() {
         <div className="absolute inset-0 bg-[#3A2420]">
           <img
             src="https://images.unsplash.com/photo-1572947650440-e8a97ef053b2?w=1600&h=900&fit=crop&auto=format"
-            alt="Museum grand hall"
-            className="w-full h-full object-cover opacity-10"
+            alt=""
+            className="hero-slide hero-slide-1"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=1600&h=900&fit=crop&auto=format"
+            alt=""
+            className="hero-slide hero-slide-2"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=1600&h=900&fit=crop&auto=format"
+            alt=""
+            className="hero-slide hero-slide-3"
+          />
+          <img
+            src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=1600&h=900&fit=crop&auto=format"
+            alt=""
+            className="hero-slide hero-slide-4"
           />
         </div>
 

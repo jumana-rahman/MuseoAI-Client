@@ -33,7 +33,7 @@ export default function Home() {
   }, []);
 
   const scrollToFeatures = () => {
-    document.getElementById("features")?.scrollIntoView({ behavior: "smooth" });
+    document.getElementById("featured-museums")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -140,7 +140,7 @@ export default function Home() {
       </section>
 
       {/* ── Featured Museums ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section id="featured-museums" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex items-end justify-between mb-12">
           <div>
             <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Curated Collection</p>

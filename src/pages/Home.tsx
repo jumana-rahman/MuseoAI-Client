@@ -291,47 +291,48 @@ export default function Home() {
             <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Museum Insights</p>
             <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Collection at a Glance</h2>
           </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl p-6 shadow-warm border border-[#EDD9BC]">
-            <h3 className="font-display text-[#4E342E] font-semibold text-lg mb-6">Museums by Category</h3>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={STATS_BY_CATEGORY} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <XAxis dataKey="category" tick={{ fontSize: 11, fill: "#8B857C" }} />
-                <YAxis tick={{ fontSize: 11, fill: "#8B857C" }} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: "#F8F5F0", border: "1px solid #EDD9BC", borderRadius: 12, fontSize: 12 }}
-                />
-                <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                  {STATS_BY_CATEGORY.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white rounded-2xl p-6 shadow-warm border border-[#EDD9BC]">
+              <h3 className="font-display text-[#4E342E] font-semibold text-lg mb-6">Museums by Category</h3>
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={STATS_BY_CATEGORY} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="category" tick={{ fontSize: 11, fill: "#8B857C" }} />
+                  <YAxis tick={{ fontSize: 11, fill: "#8B857C" }} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: "#F8F5F0", border: "1px solid #EDD9BC", borderRadius: 12, fontSize: 12 }}
+                  />
+                  <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                    {STATS_BY_CATEGORY.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-          <div className="bg-white rounded-2xl p-6 shadow-warm border border-[#EDD9BC]">
-            <h3 className="font-display text-[#4E342E] font-semibold text-lg mb-6">Museums by Country</h3>
-            <ResponsiveContainer width="100%" height={260}>
-              <PieChart>
-                <Pie
-                  data={STATS_BY_COUNTRY}
-                  dataKey="count"
-                  nameKey="country"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={90}
-                  label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
-                  labelLine={false}
-                >
-                  {STATS_BY_COUNTRY.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={{ backgroundColor: "#F8F5F0", border: "1px solid #EDD9BC", borderRadius: 12, fontSize: 12 }} />
-                <Legend wrapperStyle={{ fontSize: 11, color: "#8B857C" }} />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="bg-white rounded-2xl p-6 shadow-warm border border-[#EDD9BC]">
+              <h3 className="font-display text-[#4E342E] font-semibold text-lg mb-6">Museums by Country</h3>
+              <ResponsiveContainer width="100%" height={260}>
+                <PieChart>
+                  <Pie
+                    data={STATS_BY_COUNTRY}
+                    dataKey="count"
+                    nameKey="country"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={90}
+                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
+                    labelLine={false}
+                  >
+                    {STATS_BY_COUNTRY.map((_, i) => (
+                      <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: "#F8F5F0", border: "1px solid #EDD9BC", borderRadius: 12, fontSize: 12 }} />
+                  <Legend wrapperStyle={{ fontSize: 11, color: "#8B857C" }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </motion.div>
       </section>

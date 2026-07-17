@@ -147,12 +147,13 @@ export default function Home() {
       </section>
 
       {/* ── Featured Museums ── */}
-      <section id="featured-museums" className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto rounded-t-3xl">
+      <section id="featured-museums" className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 rounded-t-3xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto"
         >
           <div className="flex items-end justify-between mb-12">
             <div>
@@ -201,12 +202,13 @@ export default function Home() {
       </section>
 
       {/* ── Why MuseoAI ── */}
-      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto"
         >
           <div className="text-center mb-14">
             <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Why Choose Us</p>
@@ -280,12 +282,13 @@ export default function Home() {
       </section>
 
       {/* ── Stats Charts ── */}
-      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
+          className="max-w-7xl mx-auto"
         >
           <div className="text-center mb-12">
             <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Museum Insights</p>
@@ -388,12 +391,13 @@ export default function Home() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      <section className="relative z-10 bg-white py-20 px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6 }}
+          className="max-w-5xl mx-auto"
         >
           <div className="text-center mb-12">
             <p className="text-[#A65E2E] text-sm font-semibold uppercase tracking-widest mb-2">Loved by Explorers</p>

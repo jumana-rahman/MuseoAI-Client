@@ -30,7 +30,7 @@ export default function Register() {
       {/* Left: image */}
       <div className="hidden lg:block lg:w-1/2 relative">
         <img
-          src="https://images.unsplash.com/photo-1571115764595-644a1f56a55c?w=900&h=1200&fit=crop&auto=format"
+          src="https://images.unsplash.com/photo-1594608661623-aa0bd3a69d98?w=900&h=1200&fit=crop&auto=format"
           alt="Metropolitan Museum"
           className="w-full h-full object-cover"
         />

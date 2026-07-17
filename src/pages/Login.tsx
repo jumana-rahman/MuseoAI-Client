@@ -41,7 +41,7 @@ export default function Login() {
       {/* Left: image */}
       <div className="hidden lg:block lg:w-1/2 relative">
         <img
-          src="https://images.unsplash.com/photo-1509228468518-180d2b1f5b00?w=900&h=1200&fit=crop&auto=format"
+          src="https://images.unsplash.com/photo-1564399580075-5dfe19c205f3?w=900&h=1200&fit=crop&auto=format"
           alt="Museum interior"
           className="w-full h-full object-cover"
         />

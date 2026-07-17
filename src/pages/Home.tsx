@@ -42,11 +42,10 @@ export default function Home() {
       <section ref={heroRef} className="relative min-h-[65vh] flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-[#3A2420]">
           <img
-            src="https://images.unsplash.com/photo-1509228468518-180d2b1f5b00?w=1600&h=900&fit=crop&auto=format"
+            src="https://images.unsplash.com/photo-1572947650440-e8a97ef053b2?w=1600&h=900&fit=crop&auto=format"
             alt="Museum grand hall"
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover opacity-10"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#3A2420]/80 via-[#3A2420]/50 to-transparent" />
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">

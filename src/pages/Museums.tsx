@@ -65,8 +65,11 @@ export default function Museums() {
   return (
     <div className="min-h-screen bg-[#F8F5F0] pt-20">
       {/* Hero banner */}
-      <div className="bg-[#4E342E] py-14 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
+      <div className="relative bg-[#4E342E] py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=1600&h=600&fit=crop&auto=format" alt="" className="w-full h-full object-cover" />
+        </div>
+        <div className="relative max-w-4xl mx-auto text-center">
           <h1 className="font-display text-4xl sm:text-5xl text-[#F8F5F0] font-bold mb-3">Explore Museums</h1>
           <p className="text-[#8B857C] text-lg mb-8">Discover {MUSEUMS.length} curated museums from around the world</p>
           {/* Search */}

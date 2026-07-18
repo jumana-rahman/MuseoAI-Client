@@ -8,7 +8,33 @@ import {
   ChevronDown, Sparkles, MessageCircle, Map, Heart, Star, ArrowRight,
   ChevronLeft, ChevronRight, Plus, Minus
 } from "lucide-react";
-import { CATEGORIES, POPULAR_COUNTRIES, TESTIMONIALS, FAQS } from "../data/museums";
+const CATEGORIES_WITH_ICONS: Record<string, string> = {
+  Art: "\uD83C\uDFA8", History: "\uD83C\uDFDB\uFE0F", Archaeology: "\u26B1\uFE0F", Science: "\uD83D\uDD2C",
+  Military: "\u2694\uFE0F", Technology: "\uD83D\uDCA1", "Children's Museum": "\uD83C\uDFAA", "Natural History": "\uD83E\uDD95",
+};
+
+const TESTIMONIALS = [
+  { id: 1, name: "Sophie Laurent", location: "Paris, France", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&auto=format", text: "MuseoAI completely transformed how I plan museum visits. The AI guide for the Louvre helped me understand the historical context of each artwork so much better than the audio tour ever did." },
+  { id: 2, name: "Hiroshi Tanaka", location: "Tokyo, Japan", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&auto=format", text: "I used MuseoAI to plan our family trip to three museums in a week. The personalized recommendations were spot-on \u2014 even found hidden gems I never would have discovered otherwise." },
+  { id: 3, name: "Amelia Johnson", location: "New York, USA", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&auto=format", text: "The community guides feature is brilliant. I shared my Met itinerary and got 200+ likes. It's wonderful to contribute to a community of museum enthusiasts around the world." },
+];
+
+const FAQS = [
+  { q: "Is MuseoAI free to use?", a: "MuseoAI's core features \u2014 browsing museums, reading guides, and getting AI recommendations \u2014 are free. Creating guides and using the AI Museum Guide requires a free account." },
+  { q: "How does the AI Museum Guide work?", a: "The AI Museum Guide is a contextual chat assistant embedded on each museum's detail page. It uses the museum's curated information \u2014 history, exhibits, opening hours, tips \u2014 to give you accurate, visitor-friendly answers." },
+  { q: "Can I add my own museum to the directory?", a: "Currently, the museum directory is curated by our editorial team to ensure accuracy. You can however create community guides for any museum in our directory." },
+  { q: "How does the smart recommendation engine improve over time?", a: "The recommendation engine learns from your interactions \u2014 museums you favorite, guides you read, and your feedback signals \u2014 to continuously improve the relevance of suggestions." },
+  { q: "Are the museum details always up to date?", a: "We update pricing, opening hours, and visitor information regularly. We always recommend checking the official museum website for the most current information before your visit." },
+];
+
+const POPULAR_COUNTRIES = [
+  { name: "France", image: "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=600&h=400&fit=crop&auto=format" },
+  { name: "Italy", image: "https://images.unsplash.com/photo-1525874684015-58379d421a52?w=600&h=400&fit=crop&auto=format" },
+  { name: "Egypt", image: "https://images.unsplash.com/photo-1539768942893-daf53e448371?w=600&h=400&fit=crop&auto=format" },
+  { name: "Japan", image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&h=400&fit=crop&auto=format" },
+  { name: "USA", image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&h=400&fit=crop&auto=format" },
+  { name: "Bangladesh", image: "https://images.unsplash.com/photo-1580130544977-1b4aa7e98aed?w=600&h=400&fit=crop&auto=format" },
+];
 import MuseumCard from "../components/MuseumCard";
 import { useAuth } from "../context/AuthContext";
 import { useFeaturedMuseums, useMuseumStats } from "../hooks/useMuseums";
@@ -192,14 +218,14 @@ export default function Home() {
             <h2 className="font-display text-3xl sm:text-4xl text-[#F8F5F0] font-bold">Explore by Category</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {CATEGORIES.map((cat) => (
+            {statsByCategory.map((cat: { category: string; count: number }) => (
               <Link
-                key={cat.name}
-                to={`/museums?category=${cat.name}`}
+                key={cat.category}
+                to={`/museums?category=${cat.category}`}
                 className="group bg-[#3A2420] border border-[#6D4C41] rounded-2xl p-6 text-center hover:bg-[#A65E2E] hover:border-[#A65E2E] transition-all duration-300"
               >
-                <div className="text-4xl mb-3">{cat.icon}</div>
-                <p className="font-display text-[#F8F5F0] font-semibold text-sm">{cat.name}</p>
+                <div className="text-4xl mb-3">{CATEGORIES_WITH_ICONS[cat.category] || "\uD83C\uDFDB\uFE0F"}</div>
+                <p className="font-display text-[#F8F5F0] font-semibold text-sm">{cat.category}</p>
                 <p className="text-[#8B857C] text-xs mt-1 group-hover:text-[#EDD9BC]">{cat.count} museums</p>
               </Link>
             ))}
@@ -269,20 +295,24 @@ export default function Home() {
             <h2 className="font-display text-3xl sm:text-4xl text-[#4E342E] font-bold">Popular Destinations</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {POPULAR_COUNTRIES.map((c) => (
-              <Link
-                key={c.name}
-                to={`/museums?country=${c.name}`}
-                className="group relative rounded-2xl overflow-hidden shadow-warm aspect-square"
-              >
-                <img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#3A2420]/80 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 text-center">
-                  <p className="font-display text-white font-semibold text-sm">{c.name}</p>
-                  <p className="text-[#D8B892] text-xs">{c.museums} museum{c.museums > 1 ? "s" : ""}</p>
-                </div>
-              </Link>
-            ))}
+            {POPULAR_COUNTRIES.map((c) => {
+              const countryStat = statsByCountry.find((s: { country: string; count: number }) => s.country === c.name);
+              const count = countryStat?.count ?? 0;
+              return (
+                <Link
+                  key={c.name}
+                  to={`/museums?country=${c.name}`}
+                  className="group relative rounded-2xl overflow-hidden shadow-warm aspect-square"
+                >
+                  <img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#3A2420]/80 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3 text-center">
+                    <p className="font-display text-white font-semibold text-sm">{c.name}</p>
+                    <p className="text-[#D8B892] text-xs">{count} museum{count !== 1 ? "s" : ""}</p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </motion.div>
       </section>

@@ -61,4 +61,7 @@ export const museumService = {
 
   statsByCountry: () =>
     apiRequest<{ country: string; count: number }[]>("/museums/stats/by-country"),
+
+  platformStats: () =>
+    apiRequest<{ museums: number; guides: number; aiConversations: number }>("/stats"),
 };

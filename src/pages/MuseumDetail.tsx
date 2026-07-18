@@ -293,11 +293,15 @@ export default function MuseumDetail() {
                   reviews.map((r) => (
                     <div key={r._id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-9 h-9 rounded-full bg-[#EDD9BC] flex items-center justify-center text-[#A65E2E] text-sm font-bold">
-                          U
-                        </div>
+                        {(r as any).userAvatar ? (
+                          <img src={(r as any).userAvatar} alt="" className="w-9 h-9 rounded-full object-cover" />
+                        ) : (
+                          <div className="w-9 h-9 rounded-full bg-[#EDD9BC] flex items-center justify-center text-[#A65E2E] text-sm font-bold">
+                            {((r as any).userName ?? "A")[0].toUpperCase()}
+                          </div>
+                        )}
                         <div>
-                          <p className="font-medium text-[#4E342E] text-sm">User</p>
+                          <p className="font-medium text-[#4E342E] text-sm">{(r as any).userName ?? "Anonymous"}</p>
                           <div className="flex gap-0.5">
                             {[1,2,3,4,5].map((s) => <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? "text-[#D8B892] fill-[#D8B892]" : "text-[#EDD9BC]"}`} />)}
                           </div>

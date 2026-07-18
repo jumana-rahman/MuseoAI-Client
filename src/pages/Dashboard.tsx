@@ -8,8 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import { useMyGuides, useCreateGuide, useDeleteGuide, useAIGuideGenerate } from "../hooks/useGuides";
 import type { Guide } from "../services/guides";
 import type { Museum } from "../services/museums";
-import { useMuseums } from "../hooks/useMuseums";
-import { useFavorites } from "../hooks/useMuseums";
+import { useMuseums, useFavorites, usePlatformStats } from "../hooks/useMuseums";
 import { motion } from "framer-motion";
 
 const AUDIENCES = ["Families", "Students", "Tourists", "Researchers", "Art Lovers"];
@@ -111,6 +110,7 @@ function Overview() {
   const { user } = useAuth();
   const { data: myGuides, isLoading: guidesLoading } = useMyGuides();
   const { data: favorites, isLoading: favsLoading } = useFavorites();
+  const { data: platformStats, isLoading: statsLoading } = usePlatformStats();
 
   const guideCount = myGuides?.length ?? 0;
   const favCount = favorites?.length ?? 0;
@@ -134,8 +134,8 @@ function Overview() {
           textColor="text-[#A65E2E]"
         />
         <StatCard
-          label="Museums Explored"
-          value={0}
+          label="AI Conversations"
+          value={statsLoading ? undefined : platformStats?.aiConversations ?? 0}
           icon={<Sparkles className="w-5 h-5" />}
           color="bg-[#EDD9BC]"
           textColor="text-[#A65E2E]"

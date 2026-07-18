@@ -47,6 +47,13 @@ export function useMuseumStats() {
   return { categoryQuery, countryQuery };
 }
 
+export function usePlatformStats() {
+  return useQuery({
+    queryKey: ["platform", "stats"],
+    queryFn: museumService.platformStats,
+  });
+}
+
 export function useFavorites() {
   const { user } = useAuth();
   return useQuery({

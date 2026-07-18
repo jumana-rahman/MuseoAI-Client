@@ -1,7 +1,7 @@
 import { apiRequest } from "./api";
 
 export interface Guide {
-  _id: string;
+  id: string;
   title: string;
   museumId: string;
   museumName?: string;
@@ -44,7 +44,7 @@ export const guideService = {
   getById: (id: string) => apiRequest<Guide>(`/guides/${id}`),
 
   create: (data: CreateGuidePayload) =>
-    apiRequest<{ _id: string; message: string }>("/guides", {
+    apiRequest<{ id: string; message: string }>("/guides", {
       method: "POST",
       body: data,
     }),

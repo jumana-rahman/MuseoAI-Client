@@ -253,7 +253,7 @@ export default function MuseumDetail() {
                   </div>
                 ) : (
                   guides.map((g) => (
-                    <Link key={g._id} to={`/guides/${g._id}`} className="block bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm hover:shadow-warm-lg transition-shadow">
+                    <Link key={g.id} to={`/guides/${g.id}`} className="block bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm hover:shadow-warm-lg transition-shadow">
                       <div className="flex gap-2 mb-2">
                         <span className="bg-[#EDD9BC] text-[#4E342E] text-xs px-2 py-0.5 rounded-full">{g.targetAudience}</span>
                         <span className="bg-[#EDD9BC] text-[#4E342E] text-xs px-2 py-0.5 rounded-full">{g.visitDuration}</span>
@@ -308,7 +308,7 @@ export default function MuseumDetail() {
                   </div>
                 ) : (
                   reviews.map((r) => (
-                    <div key={r._id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm">
+                    <div key={r.id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm">
                       <div className="flex items-center gap-3 mb-3">
                         {(r as any).userAvatar ? (
                           <img src={(r as any).userAvatar} alt="" className="w-9 h-9 rounded-full object-cover" />

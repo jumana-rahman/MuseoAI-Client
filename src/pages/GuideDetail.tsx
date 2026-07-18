@@ -11,7 +11,7 @@ export default function GuideDetail() {
 
   const handleLike = () => {
     if (!user || !guide) return;
-    toggleLike.mutate(guide._id);
+    toggleLike.mutate(guide.id);
   };
 
   if (isLoading) {

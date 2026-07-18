@@ -2,7 +2,7 @@ import { apiRequest } from "./api";
 import type { Museum } from "./museums";
 
 export interface FavoriteEntry {
-  _id: string;
+  id: string;
   userId: string;
   museumId: string;
   createdAt: string;

@@ -159,7 +159,7 @@ function Overview() {
           ) : (
             <div className="space-y-3">
               {myGuides!.slice(0, 5).map((guide: Guide) => (
-                <div key={guide._id} className="flex items-center gap-3 text-sm">
+                <div key={guide.id} className="flex items-center gap-3 text-sm">
                   <div className="w-7 h-7 bg-[#EDD9BC] rounded-lg flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-4 h-4 text-[#A65E2E]" />
                   </div>
@@ -508,7 +508,7 @@ function MyGuides() {
             </thead>
             <tbody>
               {guides.map((guide: Guide, i: number) => (
-                <tr key={guide._id} className={`border-b border-[#EDD9BC] last:border-0 ${i % 2 === 0 ? "" : "bg-[#F8F5F0]"}`}>
+                <tr key={guide.id} className={`border-b border-[#EDD9BC] last:border-0 ${i % 2 === 0 ? "" : "bg-[#F8F5F0]"}`}>
                   <td className="px-4 py-3">
                     <p className="font-medium text-[#4E342E] text-sm line-clamp-1">{guide.title}</p>
                   </td>
@@ -521,7 +521,7 @@ function MyGuides() {
                         <Eye className="w-3.5 h-3.5" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(guide._id)}
+                        onClick={() => handleDelete(guide.id)}
                         disabled={deleteGuide.isPending}
                         className="w-7 h-7 bg-red-50 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors disabled:opacity-50"
                       >

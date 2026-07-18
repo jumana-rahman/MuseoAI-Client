@@ -1,7 +1,7 @@
 import { apiRequest } from "./api";
 
 export interface Review {
-  _id: string;
+  id: string;
   museumId: string;
   userId: string;
   rating: number;

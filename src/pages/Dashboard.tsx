@@ -515,11 +515,14 @@ function ProfileSettings() {
     country: user?.country || "",
     photo: user?.photo || "",
   });
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateProfile(form);
+    setSaving(true);
+    await updateProfile(form);
+    setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -550,8 +553,8 @@ function ProfileSettings() {
           <FormField label="Bio">
             <textarea value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} rows={3} maxLength={200} placeholder="Tell the community about yourself..." className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2.5 text-sm text-[#4E342E] placeholder-[#8B857C] focus:outline-none focus:border-[#D8B892] resize-none" />
           </FormField>
-          <button type="submit" className="bg-[#4E342E] text-[#F8F5F0] px-6 py-2.5 rounded-2xl text-sm font-semibold hover:bg-[#A65E2E] transition-colors">
-            {saved ? "Saved!" : "Save Changes"}
+          <button type="submit" disabled={saving} className="bg-[#4E342E] text-[#F8F5F0] px-6 py-2.5 rounded-2xl text-sm font-semibold hover:bg-[#A65E2E] transition-colors disabled:opacity-60">
+            {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
           </button>
         </form>
       </div>

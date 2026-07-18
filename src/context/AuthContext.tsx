@@ -18,7 +18,7 @@ type AuthContextType = {
   loginGoogle: () => void;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
-  updateProfile: (data: Partial<User>) => void;
+  updateProfile: (data: Partial<User>) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -87,9 +87,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await authClient.signOut();
   };
 
-  const updateProfile = (_data: Partial<User>) => {
-    // Profile update via better-auth would need a custom endpoint
-    // For now this is a no-op — profile editing will be added later
+  const updateProfile = async (data: Partial<User>) => {
+    try {
+      const body: Record<string, string> = {};
+      if (data.name !== undefined) body.name = data.name;
+      if (data.bio !== undefined) body.bio = data.bio;
+      if (data.country !== undefined) body.country = data.country;
+      if (data.photo !== undefined) body.image = data.photo;
+      await authClient.updateUser(body);
+    } catch (err) {
+      console.error("[Auth] Update profile error:", err);
+    }
   };
 
   return (

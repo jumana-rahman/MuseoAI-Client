@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, BookOpen, PlusCircle, Heart, User, Menu, X,
-  Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2
+  Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2, Star
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useMyGuides, useCreateGuide, useDeleteGuide, useAIGuideGenerate } from "../hooks/useGuides";
 import type { Guide } from "../services/guides";
 import type { Museum } from "../services/museums";
 import { useMuseums, useFavorites, usePlatformStats } from "../hooks/useMuseums";
+import { apiRequest } from "../lib/api";
 import { motion } from "framer-motion";
 
 const AUDIENCES = ["Families", "Students", "Tourists", "Researchers", "Art Lovers"];
@@ -171,27 +173,7 @@ function Overview() {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-[#4E342E] font-semibold">Quick Actions</h2>
-          </div>
-          <div className="space-y-2">
-            {[
-              { label: "Write a new guide", to: "/dashboard/add-guide", icon: <PlusCircle className="w-4 h-4" /> },
-              { label: "Browse museums", to: "/museums", icon: <MapPin className="w-4 h-4" /> },
-              { label: "View my favorites", to: "/favorites", icon: <Heart className="w-4 h-4" /> },
-              { label: "Update profile", to: "/dashboard/profile", icon: <User className="w-4 h-4" /> },
-            ].map((item) => (
-              <Link key={item.to} to={item.to} className="flex items-center justify-between px-4 py-3 bg-[#F8F5F0] rounded-xl hover:bg-[#EDD9BC] transition-colors">
-                <div className="flex items-center gap-2 text-sm font-medium text-[#4E342E]">
-                  <span className="text-[#A65E2E]">{item.icon}</span>
-                  {item.label}
-                </div>
-                <ChevronRight className="w-4 h-4 text-[#8B857C]" />
-              </Link>
-            ))}
-          </div>
-        </div>
+        <RecentActivity />
       </div>
     </div>
   );
@@ -207,6 +189,56 @@ function StatCard({ label, value, icon, color, textColor }: { label: string; val
         <p className="font-display text-3xl font-bold text-[#4E342E]">{value}</p>
       )}
       <p className="text-[#8B857C] text-sm mt-0.5">{label}</p>
+    </div>
+  );
+}
+
+function RecentActivity() {
+  const { data: activities, isLoading } = useQuery({
+    queryKey: ["activity"],
+    queryFn: () => apiRequest("/activity"),
+    enabled: !!useAuth().user,
+  });
+
+  const icons: Record<string, React.ReactNode> = {
+    favorite: <Heart className="w-3.5 h-3.5 text-[#A65E2E]" />,
+    guide: <BookOpen className="w-3.5 h-3.5 text-[#A65E2E]" />,
+    review: <Star className="w-3.5 h-3.5 text-[#A65E2E]" />,
+  };
+
+  const labels: Record<string, string> = {
+    favorite: "Favorited",
+    guide: "Created guide",
+    review: "Reviewed",
+  };
+
+  return (
+    <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-5">
+      <h2 className="font-display text-[#4E342E] font-semibold mb-4">Recent Activity</h2>
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8"><Loader2 className="w-5 h-5 text-[#A65E2E] animate-spin" /></div>
+      ) : !activities || activities.length === 0 ? (
+        <div className="text-center py-8">
+          <Sparkles className="w-8 h-8 text-[#EDD9BC] mx-auto mb-2" />
+          <p className="text-[#8B857C] text-sm">No activity yet. Start exploring!</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {activities.slice(0, 6).map((a: any, i: number) => (
+            <div key={i} className="flex items-center gap-3 text-sm">
+              <div className="w-7 h-7 bg-[#EDD9BC] rounded-lg flex items-center justify-center flex-shrink-0">
+                {icons[a.type] || <Sparkles className="w-3.5 h-3.5 text-[#A65E2E]" />}
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-[#8B857C]">{labels[a.type] || a.type}</span>{" "}
+                <span className="font-medium text-[#4E342E] line-clamp-1">{a.museumName}</span>
+                {a.title && <span className="text-[#8B857C] text-xs"> &middot; {a.title}</span>}
+              </div>
+              <span className="text-[#8B857C] text-xs whitespace-nowrap">{new Date(a.createdAt).toLocaleDateString()}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

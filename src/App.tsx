@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import Providers from "./providers/Providers";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ErrorBoundary from "./components/ErrorBoundary";
 import Home from "./pages/Home";
 import Museums from "./pages/Museums";
 import MuseumDetail from "./pages/MuseumDetail";
@@ -40,7 +41,7 @@ function AppRoutes() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/museums" element={<Museums />} />
-          <Route path="/museums/:id" element={<MuseumDetail />} />
+          <Route path="/museums/:id" element={<ErrorBoundary><MuseumDetail /></ErrorBoundary>} />
           <Route path="/guides/:id" element={<GuideDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -50,7 +51,8 @@ function AppRoutes() {
           <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
           <Route path="/items/add" element={<ProtectedRoute><Navigate to="/dashboard/add-guide" replace /></ProtectedRoute>} />
           <Route path="/items/manage" element={<ProtectedRoute><Navigate to="/dashboard/my-guides" replace /></ProtectedRoute>} />
-          <Route path="/dashboard/*" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard/manage-guides" element={<ProtectedRoute><Navigate to="/dashboard/my-guides" replace /></ProtectedRoute>} />
+          <Route path="/dashboard/*" element={<ProtectedRoute><ErrorBoundary><Dashboard /></ErrorBoundary></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Layout>

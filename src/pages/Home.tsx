@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
   PieChart, Pie, Legend,
@@ -8,6 +9,7 @@ import {
   ChevronDown, Sparkles, MessageCircle, Map, Heart, Star, ArrowRight,
   ChevronLeft, ChevronRight, Plus, Minus
 } from "lucide-react";
+import { apiRequest } from "../lib/api";
 const CATEGORIES_WITH_ICONS: Record<string, string> = {
   Art: "\uD83C\uDFA8", History: "\uD83C\uDFDB\uFE0F", Archaeology: "\u26B1\uFE0F", Science: "\uD83D\uDD2C",
   Military: "\u2694\uFE0F", Technology: "\uD83D\uDCA1", "Children's Museum": "\uD83C\uDFAA", "Natural History": "\uD83E\uDD95",
@@ -57,6 +59,11 @@ export default function Home() {
   const { categoryQuery, countryQuery } = useMuseumStats();
   const statsByCategory = categoryQuery.data || [];
   const statsByCountry = countryQuery.data || [];
+
+  const newsletterSub = useMutation({
+    mutationFn: () => apiRequest("/newsletter", { method: "POST", body: JSON.stringify({ email }), headers: { "Content-Type": "application/json" } }),
+    onSuccess: () => setSubscribed(true),
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -529,7 +536,7 @@ export default function Home() {
             </div>
           ) : (
             <form
-              onSubmit={(e) => { e.preventDefault(); if (email) setSubscribed(true); }}
+              onSubmit={(e) => { e.preventDefault(); if (email) newsletterSub.mutate(); }}
               className="flex gap-3"
             >
               <input

@@ -9,6 +9,7 @@ import { useMuseum, useRelatedMuseums, useFavoriteMuseumIds, useToggleFavorite }
 import { useMuseumGuides } from "../hooks/useGuides";
 import { useMuseumReviews, useCreateReview } from "../hooks/useReviews";
 import { useAIChat } from "../hooks/useAI";
+import { aiService } from "../services/ai";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -42,6 +43,7 @@ export default function MuseumDetail() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<string | undefined>();
   const [input, setInput] = useState("");
+  const [streaming, setStreaming] = useState(false);
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -86,18 +88,33 @@ export default function MuseumDetail() {
     const userMsg = input.trim();
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
+    setStreaming(true);
 
-    try {
-      const res = await aiChat.mutateAsync({
-        museumId: museum.id,
-        message: userMsg,
-        conversationId,
-      });
-      setMessages((prev) => [...prev, { role: "assistant", content: res.reply }]);
-      if (res.conversationId) setConversationId(res.conversationId);
-    } catch {
-      setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, the AI service is temporarily unavailable. Please try again." }]);
-    }
+    let fullReply = "";
+    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+
+    await aiService.museumChatStream({
+      museumId: museum.id,
+      message: userMsg,
+      conversationId,
+      onChunk: (text) => {
+        fullReply += text;
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: "assistant", content: fullReply };
+          return updated;
+        });
+      },
+      onDone: () => setStreaming(false),
+      onError: () => {
+        setStreaming(false);
+        setMessages((prev) => {
+          const updated = [...prev];
+          updated[updated.length - 1] = { role: "assistant", content: "Sorry, the AI service is temporarily unavailable. Please try again." };
+          return updated;
+        });
+      },
+    });
   };
 
   const submitReview = async () => {
@@ -422,7 +439,7 @@ export default function MuseumDetail() {
                   </div>
                 </div>
               ))}
-              {aiChat.isPending && (
+              {streaming && (
                 <div className="flex justify-start">
                   <div className="w-6 h-6 bg-[#D8B892] rounded-full flex items-center justify-center mr-2 flex-shrink-0">
                     <Sparkles className="w-3 h-3 text-[#4E342E]" />

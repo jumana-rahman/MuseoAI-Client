@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import MuseumCard from "../components/MuseumCard";
@@ -15,24 +15,34 @@ const SORT_OPTIONS = [
 ];
 
 export default function Museums() {
-  const [searchParams] = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get("q") || "");
-  const [country, setCountry] = useState(searchParams.get("country") || "All");
-  const [category, setCategory] = useState(searchParams.get("category") || "All");
-  const [ticketType, setTicketType] = useState("All");
-  const [sort, setSort] = useState("rating_desc");
-  const [page, setPage] = useState(1);
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
-  useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 300);
-    return () => clearTimeout(t);
-  }, [search]);
+  const search = searchParams.get("q") || "";
+  const country = searchParams.get("country") || "All";
+  const category = searchParams.get("category") || "All";
+  const ticketType = searchParams.get("ticketType") || "All";
+  const sort = searchParams.get("sort") || "rating_desc";
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const filtersOpen = searchParams.get("filters") === "1";
 
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, country, category, ticketType, sort]);
+  const updateParams = (updates: Record<string, string>) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      Object.entries(updates).forEach(([key, val]) => {
+        if (val === "" || val === "All" || val === "rating_desc" || val === "1" && key === "page") {
+          next.delete(key);
+        } else {
+          next.set(key, val);
+        }
+      });
+      if (updates.page === undefined && (updates.q !== undefined || updates.country !== undefined || updates.category !== undefined || updates.ticketType !== undefined || updates.sort !== undefined)) {
+        next.delete("page");
+      }
+      return next;
+    });
+  };
+
+  const debouncedSearch = useMemo(() => search, [search]);
 
   const { data, isLoading } = useMuseums({
     search: debouncedSearch || undefined,
@@ -49,8 +59,9 @@ export default function Museums() {
   const totalPages = data?.totalPages || 0;
 
   const clearFilters = () => {
-    setSearch(""); setCountry("All"); setCategory("All"); setTicketType("All"); setSort("rating_desc"); setPage(1);
+    setSearchParams({});
   };
+
   const hasFilters = search || country !== "All" || category !== "All" || ticketType !== "All";
 
   return (
@@ -66,12 +77,12 @@ export default function Museums() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8B857C]" />
             <input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => updateParams({ q: e.target.value })}
               placeholder="Search museums by name or city..."
               className="w-full bg-[#F8F5F0] rounded-2xl pl-12 pr-4 py-3.5 text-[#4E342E] placeholder-[#8B857C] focus:outline-none focus:ring-2 focus:ring-[#D8B892] text-sm"
             />
             {search && (
-              <button onClick={() => setSearch("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8B857C] hover:text-[#4E342E]">
+              <button onClick={() => updateParams({ q: "" })} className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8B857C] hover:text-[#4E342E]">
                 <X className="w-4 h-4" />
               </button>
             )}
@@ -89,7 +100,7 @@ export default function Museums() {
         <div className="flex flex-wrap gap-3 items-center justify-between mb-6">
           <div className="flex flex-wrap gap-2 items-center">
             <button
-              onClick={() => setFiltersOpen(!filtersOpen)}
+              onClick={() => updateParams({ filters: filtersOpen ? "" : "1" })}
               className="flex items-center gap-2 bg-white border border-[#EDD9BC] rounded-xl px-4 py-2 text-sm text-[#4E342E] font-medium hover:border-[#D8B892] transition-colors shadow-warm"
             >
               <SlidersHorizontal className="w-4 h-4" /> Filters
@@ -105,7 +116,7 @@ export default function Museums() {
             <span className="text-sm text-[#8B857C]">{totalResults} results</span>
             <select
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
+              onChange={(e) => updateParams({ sort: e.target.value })}
               className="bg-white border border-[#EDD9BC] rounded-xl px-3 py-2 text-sm text-[#4E342E] focus:outline-none focus:border-[#D8B892] shadow-warm cursor-pointer"
             >
               {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -119,7 +130,7 @@ export default function Museums() {
               <label className="block text-xs font-semibold text-[#8B857C] uppercase tracking-wide mb-2">Country</label>
               <select
                 value={country}
-                onChange={(e) => setCountry(e.target.value)}
+                onChange={(e) => updateParams({ country: e.target.value })}
                 className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2 text-sm text-[#4E342E] focus:outline-none focus:border-[#D8B892]"
               >
                 {COUNTRIES.map((c) => <option key={c}>{c}</option>)}
@@ -129,7 +140,7 @@ export default function Museums() {
               <label className="block text-xs font-semibold text-[#8B857C] uppercase tracking-wide mb-2">Category</label>
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => updateParams({ category: e.target.value })}
                 className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2 text-sm text-[#4E342E] focus:outline-none focus:border-[#D8B892]"
               >
                 {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
@@ -139,7 +150,7 @@ export default function Museums() {
               <label className="block text-xs font-semibold text-[#8B857C] uppercase tracking-wide mb-2">Ticket Type</label>
               <select
                 value={ticketType}
-                onChange={(e) => setTicketType(e.target.value)}
+                onChange={(e) => updateParams({ ticketType: e.target.value })}
                 className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2 text-sm text-[#4E342E] focus:outline-none focus:border-[#D8B892]"
               >
                 {TICKET_TYPES.map((t) => <option key={t}>{t}</option>)}
@@ -163,7 +174,7 @@ export default function Museums() {
           </div>
         ) : museums.length === 0 ? (
           <div className="text-center py-24">
-            <div className="text-6xl mb-4">🏛️</div>
+            <div className="text-6xl mb-4">&#x1F3DB;&#xFE0F;</div>
             <h3 className="font-display text-[#4E342E] text-xl font-semibold mb-2">No museums found</h3>
             <p className="text-[#8B857C] mb-6">Try adjusting your search or filters</p>
             <button onClick={clearFilters} className="bg-[#4E342E] text-[#F8F5F0] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#A65E2E] transition-colors">
@@ -179,7 +190,7 @@ export default function Museums() {
         {totalPages > 1 && !isLoading && (
           <div className="flex items-center justify-center gap-2 mt-10">
             <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => updateParams({ page: String(Math.max(1, page - 1)) })}
               disabled={page === 1}
               className="w-9 h-9 rounded-xl bg-white border border-[#EDD9BC] flex items-center justify-center text-[#4E342E] disabled:opacity-40 hover:border-[#D8B892] hover:bg-[#EDD9BC]/50 hover:scale-105 active:scale-95 transition-all duration-200 ease-out shadow-warm cursor-pointer disabled:cursor-not-allowed"
             >
@@ -188,7 +199,7 @@ export default function Museums() {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
               <button
                 key={p}
-                onClick={() => setPage(p)}
+                onClick={() => updateParams({ page: String(p) })}
                 className={`w-9 h-9 rounded-xl text-sm font-medium cursor-pointer transition-all duration-200 ease-out shadow-warm ${
                   p === page
                     ? "bg-[#4E342E] text-[#F8F5F0] scale-105 shadow-warm-lg"
@@ -199,7 +210,7 @@ export default function Museums() {
               </button>
             ))}
             <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => updateParams({ page: String(Math.min(totalPages, page + 1)) })}
               disabled={page === totalPages}
               className="w-9 h-9 rounded-xl bg-white border border-[#EDD9BC] flex items-center justify-center text-[#4E342E] disabled:opacity-40 hover:border-[#D8B892] hover:bg-[#EDD9BC]/50 hover:scale-105 active:scale-95 transition-all duration-200 ease-out shadow-warm cursor-pointer disabled:cursor-not-allowed"
             >

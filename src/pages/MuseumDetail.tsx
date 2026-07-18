@@ -4,9 +4,11 @@ import {
   MapPin, Clock, Ticket, Star, Heart, Send, Sparkles,
   MessageCircle, RefreshCw, X, BookOpen, ArrowLeft
 } from "lucide-react";
-import { MUSEUMS } from "../data/museums";
-import { GUIDES, REVIEWS } from "../data/guides";
 import { useAuth } from "../context/AuthContext";
+import { useMuseum, useRelatedMuseums, useFavoriteMuseumIds, useToggleFavorite } from "../hooks/useMuseums";
+import { useMuseumGuides } from "../hooks/useGuides";
+import { useMuseumReviews, useCreateReview } from "../hooks/useReviews";
+import { useAIChat } from "../hooks/useAI";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -19,72 +21,50 @@ const PROMPT_CHIPS = [
   "Any visiting tips?",
 ];
 
-const AI_RESPONSES: Record<string, string[]> = {
-  default: [
-    "Based on the museum's curated information, I'd recommend starting with the main gallery on the ground floor to get an overview of the collection.",
-    "This museum is excellent for families — interactive exhibits and child-friendly explanations are available throughout.",
-    "Most visitors spend 2-4 hours. If you're an enthusiast, allow a full day to appreciate the collection deeply.",
-    "Yes, guided tours are typically available. Check the museum's schedule at the welcome desk when you arrive.",
-  ],
-};
-
-function getAIResponse(museumId: string, message: string): string {
-  const museum = MUSEUMS.find((m) => m.id === museumId);
-  if (!museum) return "I'm sorry, I couldn't find information about this museum.";
-
-  const q = message.toLowerCase();
-  if (q.includes("open") || q.includes("hour") || q.includes("time")) {
-    return `${museum.title} is open ${museum.openingHours}. I recommend arriving at opening time to avoid crowds and have the galleries to yourself.`;
-  }
-  if (q.includes("ticket") || q.includes("price") || q.includes("cost") || q.includes("fee")) {
-    return museum.ticketType === "Free"
-      ? `Great news — ${museum.title} is free to enter! ${museum.visitorTips[0] || ""}`
-      : `Admission to ${museum.title} is $${museum.ticketPrice} per adult. ${museum.ticketType === "Premium" ? "Premium entry includes access to special exhibitions." : "Children and student discounts are often available — check the museum website."} I recommend booking online to skip queues.`;
-  }
-  if (q.includes("child") || q.includes("kid") || q.includes("family")) {
-    return `${museum.title} is ${museum.category === "Children's Museum" ? "specifically designed for children and" : ""} welcoming to families. ${museum.facilities.includes("Family Programs") ? "They offer dedicated family programs." : "Look for interactive elements and family-friendly zones throughout the museum."} Bring water and snacks for the little ones.`;
-  }
-  if (q.includes("how long") || q.includes("duration") || q.includes("visit")) {
-    return `For ${museum.title}, I recommend planning at least 2-3 hours for a satisfying visit. Art enthusiasts or those with deep interest in ${museum.category.toLowerCase()} may want to spend a full day. ${museum.visitorTips[museum.visitorTips.length - 1] || ""}`;
-  }
-  if (q.includes("tip") || q.includes("advice") || q.includes("recommend")) {
-    const tips = museum.visitorTips;
-    return `Here are my top tips for visiting ${museum.title}:\n\n${tips.map((t, i) => `${i + 1}. ${t}`).join("\n")}`;
-  }
-  if (q.includes("first") || q.includes("start") || q.includes("begin")) {
-    return `When you arrive at ${museum.title}, head to the most celebrated collection first — this gives you the best viewing experience while your energy is fresh. ${museum.visitorTips[0] || "Check the museum map at the entrance for the main highlights."}`;
-  }
-
-  const responses = AI_RESPONSES.default;
-  return `At ${museum.title}, ${responses[Math.floor(Math.random() * responses.length)].toLowerCase()} ${museum.visitorTips[0] ? `\n\nTop tip: ${museum.visitorTips[0]}` : ""}`;
-}
-
 export default function MuseumDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user, favorites, toggleFavorite, incrementAIConversation } = useAuth();
+  const { user } = useAuth();
 
-  const museum = MUSEUMS.find((m) => m.id === id);
-  const guides = GUIDES.filter((g) => g.museumId === id);
-  const reviews = REVIEWS.filter((r) => r.museumId === id);
-  const related = MUSEUMS.filter((m) => m.id !== id && m.category === museum?.category).slice(0, 4);
+  const { data: museum, isLoading: museumLoading } = useMuseum(id || "");
+  const { data: related = [] } = useRelatedMuseums(id || "");
+  const { data: guides = [] } = useMuseumGuides(id || "");
+  const { data: reviews = [] } = useMuseumReviews(id || "");
+  const favoriteIds = useFavoriteMuseumIds();
+  const toggleFav = useToggleFavorite();
+  const createReview = useCreateReview(id || "");
+  const aiChat = useAIChat();
+
+  const isFav = favoriteIds.has(id || "");
 
   const [activeTab, setActiveTab] = useState("overview");
   const [chatOpen, setChatOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: `Welcome! I'm your AI guide for ${museum?.title}. Ask me anything about the museum — opening hours, highlights, visitor tips, or what to see first.` },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationId, setConversationId] = useState<string | undefined>();
   const [input, setInput] = useState("");
-  const [typing, setTyping] = useState(false);
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
-  const [allReviews, setAllReviews] = useState(reviews);
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const isFav = favorites.includes(id || "");
+
+  useEffect(() => {
+    if (museum && messages.length === 0) {
+      setMessages([
+        { role: "assistant", content: `Welcome! I'm your AI guide for ${museum.title}. Ask me anything about the museum — opening hours, highlights, visitor tips, or what to see first.` },
+      ]);
+    }
+  }, [museum]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  if (museumLoading) {
+    return (
+      <div className="min-h-screen bg-[#F8F5F0] pt-20 flex items-center justify-center">
+        <div className="animate-pulse text-[#8B857C]">Loading museum...</div>
+      </div>
+    );
+  }
 
   if (!museum) {
     return (
@@ -106,35 +86,40 @@ export default function MuseumDetail() {
     const userMsg = input.trim();
     setInput("");
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
-    setTyping(true);
-    await new Promise((r) => setTimeout(r, 1200 + Math.random() * 800));
-    const response = getAIResponse(museum.id, userMsg);
-    setMessages((prev) => [...prev, { role: "assistant", content: response }]);
-    setTyping(false);
-    incrementAIConversation();
+
+    try {
+      const res = await aiChat.mutateAsync({
+        museumId: museum.id,
+        message: userMsg,
+        conversationId,
+      });
+      setMessages((prev) => [...prev, { role: "assistant", content: res.reply }]);
+      if (res.conversationId) setConversationId(res.conversationId);
+    } catch {
+      setMessages((prev) => [...prev, { role: "assistant", content: "Sorry, the AI service is temporarily unavailable. Please try again." }]);
+    }
   };
 
-  const submitReview = () => {
+  const submitReview = async () => {
     if (!user || !reviewText.trim()) return;
-    setAllReviews((prev) => [{
-      id: `r_new_${Date.now()}`,
-      museumId: museum.id,
-      userId: user.id,
-      userName: user.name,
-      userAvatar: user.photo,
-      rating: reviewRating,
-      review: reviewText,
-      createdAt: new Date().toISOString().split("T")[0],
-    }, ...prev]);
-    setReviewText("");
-    setReviewRating(5);
+    try {
+      await createReview.mutateAsync({ rating: reviewRating, review: reviewText });
+      setReviewText("");
+      setReviewRating(5);
+    } catch {
+      // Error handled by mutation
+    }
+  };
+
+  const handleToggleFavorite = () => {
+    if (!user) return navigate("/login");
+    toggleFav.mutate({ museumId: museum.id, isFavoted: isFav });
   };
 
   const tabs = ["overview", "history", "facilities", "guides", "reviews"];
 
   return (
     <div className="min-h-screen bg-[#F8F5F0] pt-16">
-      {/* Banner */}
       <div className="relative h-80 sm:h-96 bg-[#3A2420]">
         <img src={museum.coverImage} alt={museum.title} className="w-full h-full object-cover opacity-60" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#3A2420]/80 via-transparent to-transparent" />
@@ -156,7 +141,7 @@ export default function MuseumDetail() {
         </div>
         {user && (
           <button
-            onClick={() => toggleFavorite(museum.id)}
+            onClick={handleToggleFavorite}
             className={`absolute top-6 right-4 sm:right-8 w-10 h-10 rounded-full flex items-center justify-center transition-all ${isFav ? "bg-[#A65E2E] text-white" : "bg-white/20 text-white hover:bg-[#A65E2E]"}`}
           >
             <Heart className={`w-5 h-5 ${isFav ? "fill-current" : ""}`} />
@@ -164,7 +149,6 @@ export default function MuseumDetail() {
         )}
       </div>
 
-      {/* Gallery row */}
       {museum.gallery.length > 0 && (
         <div className="flex gap-2 px-4 sm:px-8 mt-2">
           {museum.gallery.map((img, i) => (
@@ -177,9 +161,7 @@ export default function MuseumDetail() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main content */}
           <div className="lg:col-span-2">
-            {/* Tabs */}
             <div className="flex gap-1 bg-white rounded-2xl p-1 border border-[#EDD9BC] shadow-warm mb-6 overflow-x-auto">
               {tabs.map((t) => (
                 <button
@@ -254,7 +236,7 @@ export default function MuseumDetail() {
                   </div>
                 ) : (
                   guides.map((g) => (
-                    <div key={g.id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm hover:shadow-warm-lg transition-shadow">
+                    <div key={g._id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm hover:shadow-warm-lg transition-shadow">
                       <div className="flex gap-2 mb-2">
                         <span className="bg-[#EDD9BC] text-[#4E342E] text-xs px-2 py-0.5 rounded-full">{g.targetAudience}</span>
                         <span className="bg-[#EDD9BC] text-[#4E342E] text-xs px-2 py-0.5 rounded-full">{g.visitDuration}</span>
@@ -262,10 +244,7 @@ export default function MuseumDetail() {
                       <h3 className="font-display text-[#4E342E] font-semibold mb-1">{g.title}</h3>
                       <p className="text-[#5D4037] text-sm line-clamp-2 mb-3">{g.shortDescription}</p>
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <img src={g.authorAvatar} alt={g.authorName} className="w-6 h-6 rounded-full object-cover" />
-                          <span className="text-[#8B857C] text-xs">{g.authorName}</span>
-                        </div>
+                        <span className="text-[#8B857C] text-xs">By author</span>
                         <div className="flex items-center gap-1 text-[#D8B892] text-xs">
                           <Heart className="w-3.5 h-3.5 fill-[#D8B892]" />{g.likes}
                         </div>
@@ -293,35 +272,37 @@ export default function MuseumDetail() {
                       value={reviewText}
                       onChange={(e) => setReviewText(e.target.value)}
                       placeholder="Share your experience visiting this museum..."
-                      maxLength={500}
+                      maxLength={2000}
                       rows={3}
                       className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2.5 text-sm text-[#4E342E] placeholder-[#8B857C] focus:outline-none focus:border-[#D8B892] resize-none mb-3"
                     />
                     <button
                       onClick={submitReview}
-                      disabled={!reviewText.trim()}
+                      disabled={!reviewText.trim() || createReview.isPending}
                       className="bg-[#4E342E] text-[#F8F5F0] px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#A65E2E] transition-colors disabled:opacity-50"
                     >
-                      Submit Review
+                      {createReview.isPending ? "Submitting..." : "Submit Review"}
                     </button>
                   </div>
                 )}
-                {allReviews.length === 0 ? (
+                {reviews.length === 0 ? (
                   <div className="bg-white rounded-2xl p-8 text-center border border-[#EDD9BC] shadow-warm">
                     <p className="text-[#8B857C]">No reviews yet. Be the first to share your experience.</p>
                   </div>
                 ) : (
-                  allReviews.map((r) => (
-                    <div key={r.id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm">
+                  reviews.map((r) => (
+                    <div key={r._id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm">
                       <div className="flex items-center gap-3 mb-3">
-                        <img src={r.userAvatar} alt={r.userName} className="w-9 h-9 rounded-full object-cover" />
+                        <div className="w-9 h-9 rounded-full bg-[#EDD9BC] flex items-center justify-center text-[#A65E2E] text-sm font-bold">
+                          U
+                        </div>
                         <div>
-                          <p className="font-medium text-[#4E342E] text-sm">{r.userName}</p>
+                          <p className="font-medium text-[#4E342E] text-sm">User</p>
                           <div className="flex gap-0.5">
                             {[1,2,3,4,5].map((s) => <Star key={s} className={`w-3.5 h-3.5 ${s <= r.rating ? "text-[#D8B892] fill-[#D8B892]" : "text-[#EDD9BC]"}`} />)}
                           </div>
                         </div>
-                        <span className="ml-auto text-[#8B857C] text-xs">{r.createdAt}</span>
+                        <span className="ml-auto text-[#8B857C] text-xs">{new Date(r.createdAt).toLocaleDateString()}</span>
                       </div>
                       <p className="text-[#5D4037] text-sm leading-relaxed">{r.review}</p>
                     </div>
@@ -331,9 +312,7 @@ export default function MuseumDetail() {
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-5">
-            {/* AI Chat button */}
             <div className="bg-gradient-to-br from-[#4E342E] to-[#3A2420] rounded-2xl p-5 text-[#F8F5F0]">
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles className="w-5 h-5 text-[#D8B892]" />
@@ -348,7 +327,6 @@ export default function MuseumDetail() {
               </button>
             </div>
 
-            {/* Quick info */}
             <div className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm space-y-3">
               <h3 className="font-display text-[#4E342E] font-semibold">Quick Info</h3>
               <div className="text-sm text-[#5D4037] space-y-2">
@@ -378,7 +356,6 @@ export default function MuseumDetail() {
               </a>
             </div>
 
-            {/* Related museums */}
             {related.length > 0 && (
               <div className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm">
                 <h3 className="font-display text-[#4E342E] font-semibold mb-3">Related Museums</h3>
@@ -405,11 +382,9 @@ export default function MuseumDetail() {
         </div>
       </div>
 
-      {/* AI Chat Drawer */}
       {chatOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:justify-end bg-black/40">
           <div className="bg-[#F8F5F0] w-full sm:w-96 sm:h-[90vh] sm:mr-4 rounded-t-3xl sm:rounded-3xl flex flex-col shadow-warm-lg overflow-hidden">
-            {/* Header */}
             <div className="bg-[#4E342E] px-4 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-[#D8B892] rounded-full flex items-center justify-center">
@@ -421,7 +396,7 @@ export default function MuseumDetail() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => setMessages([{ role: "assistant", content: `Welcome back! I'm your AI guide for ${museum.title}. What would you like to know?` }])} className="text-[#8B857C] hover:text-[#D8B892]">
+                <button onClick={() => { setMessages([]); setConversationId(undefined); }} className="text-[#8B857C] hover:text-[#D8B892]">
                   <RefreshCw className="w-4 h-4" />
                 </button>
                 <button onClick={() => setChatOpen(false)} className="text-[#8B857C] hover:text-[#D8B892]">
@@ -430,7 +405,6 @@ export default function MuseumDetail() {
               </div>
             </div>
 
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -444,7 +418,7 @@ export default function MuseumDetail() {
                   </div>
                 </div>
               ))}
-              {typing && (
+              {aiChat.isPending && (
                 <div className="flex justify-start">
                   <div className="w-6 h-6 bg-[#D8B892] rounded-full flex items-center justify-center mr-2 flex-shrink-0">
                     <Sparkles className="w-3 h-3 text-[#4E342E]" />
@@ -461,12 +435,11 @@ export default function MuseumDetail() {
               <div ref={chatEndRef} />
             </div>
 
-            {/* Prompt chips */}
             <div className="px-4 pb-2 flex gap-2 overflow-x-auto">
               {PROMPT_CHIPS.map((chip) => (
                 <button
                   key={chip}
-                  onClick={() => { setInput(chip); }}
+                  onClick={() => setInput(chip)}
                   className="flex-shrink-0 bg-[#EDD9BC] text-[#4E342E] text-xs px-3 py-1.5 rounded-full hover:bg-[#D8B892] transition-colors"
                 >
                   {chip}
@@ -474,7 +447,6 @@ export default function MuseumDetail() {
               ))}
             </div>
 
-            {/* Input */}
             <div className="px-4 pb-4 pt-2">
               <div className="flex gap-2">
                 <input
@@ -486,7 +458,7 @@ export default function MuseumDetail() {
                 />
                 <button
                   onClick={sendMessage}
-                  disabled={!input.trim() || typing}
+                  disabled={!input.trim() || aiChat.isPending}
                   className="bg-[#4E342E] text-[#F8F5F0] w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-[#A65E2E] transition-colors disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />

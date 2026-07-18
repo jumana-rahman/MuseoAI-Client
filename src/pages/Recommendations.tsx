@@ -1,51 +1,14 @@
 import { useState } from "react";
 import { Sparkles, RefreshCw, Star, MapPin, Ticket, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Link } from "react-router-dom";
-import { MUSEUMS } from "../data/museums";
 import { motion } from "framer-motion";
-
+import { useAIRecommendations, useRecordSignal } from "../hooks/useAI";
 
 const INTERESTS = ["Art & Painting", "Ancient History", "Science & Technology", "Natural History", "Military History", "Architecture", "World Cultures", "Modern Art"];
 const COUNTRIES = ["Any", "France", "Italy", "Egypt", "Japan", "USA", "United Kingdom", "Germany", "Spain"];
 const TRAVEL_TYPES = ["Solo", "Couple", "Family", "Friends"];
 const BUDGETS = ["Free only", "Budget (under $15)", "Mid-range ($15-$25)", "Premium (any)"];
 const DURATIONS = ["Half-day", "Full day", "Weekend", "Week+"];
-
-type Recommendation = {
-  museum: (typeof MUSEUMS)[0];
-  reason: string;
-};
-
-function getRecommendations(interests: string[], country: string, budget: string, travelType: string, _duration: string): Recommendation[] {
-  let candidates = [...MUSEUMS];
-
-  if (country !== "Any") candidates = candidates.filter((m) => m.country === country);
-
-  if (budget === "Free only") candidates = candidates.filter((m) => m.ticketType === "Free");
-  else if (budget === "Budget (under $15)") candidates = candidates.filter((m) => m.ticketPrice < 15);
-
-  if (travelType === "Family") candidates = candidates.filter((m) => !["Military"].includes(m.category));
-
-  candidates.sort((a, b) => b.rating - a.rating);
-
-  return candidates.slice(0, 5).map((museum) => {
-    const categoryInterestMap: Record<string, string[]> = {
-      "Art": ["Art & Painting", "Modern Art", "Architecture"],
-      "History": ["Ancient History", "World Cultures"],
-      "Archaeology": ["Ancient History", "World Cultures"],
-      "Science": ["Science & Technology"],
-      "Military": ["Military History"],
-      "Natural History": ["Natural History"],
-    };
-
-    const matchedInterests = (categoryInterestMap[museum.category] || []).filter((i) => interests.includes(i));
-    const reason = matchedInterests.length > 0
-      ? `Matches your interest in ${matchedInterests.join(" and ")}. Rated ${museum.rating}/5 with ${museum.reviewCount.toLocaleString()} reviews — one of the top ${museum.category.toLowerCase()} museums in ${museum.country}.`
-      : `Highly rated at ${museum.rating}/5. A world-class ${museum.category.toLowerCase()} destination in ${museum.city} with exceptional visitor experience for ${travelType.toLowerCase()} travelers.`;
-
-    return { museum, reason };
-  });
-}
 
 export default function Recommendations() {
   const [form, setForm] = useState({
@@ -55,10 +18,10 @@ export default function Recommendations() {
     travelType: "Solo",
     duration: "Full day",
   });
-  const [results, setResults] = useState<Recommendation[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [generated, setGenerated] = useState(false);
   const [feedback, setFeedback] = useState<Record<string, "up" | "down">>({});
+
+  const getRecommendations = useAIRecommendations();
+  const recordSignal = useRecordSignal();
 
   const toggleInterest = (i: string) => {
     setForm((f) => ({
@@ -68,12 +31,28 @@ export default function Recommendations() {
   };
 
   const generate = async () => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 1800));
-    setResults(getRecommendations(form.interests, form.country, form.budget, form.travelType, form.duration));
-    setLoading(false);
-    setGenerated(true);
+    const budgetMap: Record<string, number | undefined> = {
+      "Free only": 0,
+      "Budget (under $15)": 15,
+      "Mid-range ($15-$25)": 25,
+      "Premium (any)": undefined,
+    };
+
+    getRecommendations.mutate({
+      interests: form.interests,
+      preferredCountry: form.country !== "Any" ? form.country : undefined,
+      budget: budgetMap[form.budget],
+      travelDuration: form.duration,
+      travelType: form.travelType,
+    });
   };
+
+  const handleFeedback = (museumId: string, type: "up" | "down") => {
+    setFeedback((f) => ({ ...f, [museumId]: type }));
+    recordSignal.mutate({ museumId, signalType: type === "up" ? "like" : "dislike" });
+  };
+
+  const results = getRecommendations.data || [];
 
   return (
     <div className="min-h-screen bg-[#F8F5F0] pt-20">
@@ -92,7 +71,6 @@ export default function Recommendations() {
         transition={{ duration: 0.6 }}
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10"
       >
-        {/* Input form */}
         <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-6 mb-8">
           <h2 className="font-display text-[#4E342E] font-semibold text-lg mb-5">Your Preferences</h2>
 
@@ -122,7 +100,7 @@ export default function Recommendations() {
                 <div key={key}>
                   <label className="block text-xs font-semibold text-[#8B857C] uppercase tracking-wide mb-1.5">{label}</label>
                   <select
-                    value={(form as any)[key]}
+                    value={(form as Record<string, string | string[]>)[key] as string}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                     className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2 text-sm text-[#4E342E] focus:outline-none focus:border-[#D8B892]"
                   >
@@ -135,13 +113,13 @@ export default function Recommendations() {
             <div className="flex gap-3">
               <button
                 onClick={generate}
-                disabled={loading}
+                disabled={getRecommendations.isPending}
                 className="flex items-center gap-2 bg-[#4E342E] text-[#F8F5F0] px-6 py-2.5 rounded-2xl font-semibold hover:bg-[#A65E2E] transition-colors disabled:opacity-60 text-sm"
               >
-                {loading ? <><RefreshCw className="w-4 h-4 animate-spin" /> Finding matches...</> : <><Sparkles className="w-4 h-4" /> Get Recommendations</>}
+                {getRecommendations.isPending ? <><RefreshCw className="w-4 h-4 animate-spin" /> Finding matches...</> : <><Sparkles className="w-4 h-4" /> Get Recommendations</>}
               </button>
-              {generated && (
-                <button onClick={generate} disabled={loading} className="flex items-center gap-2 border border-[#EDD9BC] text-[#4E342E] px-4 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#EDD9BC] transition-colors">
+              {results.length > 0 && (
+                <button onClick={generate} disabled={getRecommendations.isPending} className="flex items-center gap-2 border border-[#EDD9BC] text-[#4E342E] px-4 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#EDD9BC] transition-colors">
                   <RefreshCw className="w-4 h-4" /> Regenerate
                 </button>
               )}
@@ -149,11 +127,16 @@ export default function Recommendations() {
           </div>
         </div>
 
-        {/* Results */}
+        {getRecommendations.isError && (
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-8 text-red-700 text-sm">
+            Failed to get recommendations. Please try again.
+          </div>
+        )}
+
         {results.length > 0 && (
           <div className="space-y-4">
             <h2 className="font-display text-[#4E342E] font-semibold text-xl">Your Matches</h2>
-            {results.map(({ museum, reason }, i) => (
+            {results.map((museum, i) => (
               <div key={museum.id} className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-5 flex gap-4">
                 <div className="flex-shrink-0 text-2xl font-display font-bold text-[#EDD9BC] w-8">{i + 1}</div>
                 <div className="w-24 h-24 rounded-xl overflow-hidden bg-[#EDD9BC] flex-shrink-0">
@@ -164,13 +147,13 @@ export default function Recommendations() {
                     <h3 className="font-display text-[#4E342E] font-semibold leading-tight">{museum.title}</h3>
                     <div className="flex gap-1 flex-shrink-0">
                       <button
-                        onClick={() => setFeedback((f) => ({ ...f, [museum.id]: "up" }))}
+                        onClick={() => handleFeedback(museum.id, "up")}
                         className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${feedback[museum.id] === "up" ? "bg-green-100 text-green-600" : "bg-[#EDD9BC] text-[#8B857C] hover:text-green-600"}`}
                       >
                         <ThumbsUp className="w-3.5 h-3.5" />
                       </button>
                       <button
-                        onClick={() => setFeedback((f) => ({ ...f, [museum.id]: "down" }))}
+                        onClick={() => handleFeedback(museum.id, "down")}
                         className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${feedback[museum.id] === "down" ? "bg-red-100 text-red-500" : "bg-[#EDD9BC] text-[#8B857C] hover:text-red-500"}`}
                       >
                         <ThumbsDown className="w-3.5 h-3.5" />
@@ -182,9 +165,11 @@ export default function Recommendations() {
                     <span className="flex items-center gap-1"><Star className="w-3 h-3 text-[#D8B892] fill-[#D8B892]" />{museum.rating}</span>
                     <span className="flex items-center gap-1"><Ticket className="w-3 h-3" />{museum.ticketType === "Free" ? "Free" : `$${museum.ticketPrice}`}</span>
                   </div>
-                  <p className="text-[#5D4037] text-xs leading-relaxed mb-2 italic">
-                    <span className="text-[#A65E2E] font-medium not-italic">Because:</span> {reason}
-                  </p>
+                  {museum.reason && (
+                    <p className="text-[#5D4037] text-xs leading-relaxed mb-2 italic">
+                      <span className="text-[#A65E2E] font-medium not-italic">Because:</span> {museum.reason}
+                    </p>
+                  )}
                   <Link to={`/museums/${museum.id}`} className="text-xs font-medium text-[#A65E2E] hover:underline">
                     View museum details →
                   </Link>

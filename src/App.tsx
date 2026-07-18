@@ -16,8 +16,9 @@ import Recommendations from "./pages/Recommendations";
 import GuideDetail from "./pages/GuideDetail";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const location = useLocation();
+  if (loading) return <div className="min-h-screen bg-[#F8F5F0] flex items-center justify-center"><div className="w-8 h-8 border-4 border-[#D8B892] border-t-[#4E342E] rounded-full animate-spin" /></div>;
   if (!user) return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   return <>{children}</>;
 }

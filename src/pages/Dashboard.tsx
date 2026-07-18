@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate, Routes, Route, useLocation } from "react-router-dom";
+import { Link, useLocation, Routes, Route } from "react-router-dom";
 import {
   LayoutDashboard, BookOpen, PlusCircle, Heart, User, Menu, X,
   Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2
@@ -17,12 +17,10 @@ const INTERESTS = ["Paintings", "Sculptures", "Ancient History", "Modern Art", "
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!user) {
-    navigate("/login");
     return null;
   }
 

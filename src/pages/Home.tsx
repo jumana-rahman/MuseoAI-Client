@@ -17,7 +17,7 @@ const CATEGORIES_WITH_ICONS: Record<string, string> = {
 
 const TESTIMONIALS = [
   { id: 1, name: "Sophie Laurent", location: "Paris, France", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=80&h=80&fit=crop&auto=format", text: "MuseoAI completely transformed how I plan museum visits. The AI guide for the Louvre helped me understand the historical context of each artwork so much better than the audio tour ever did." },
-  { id: 2, name: "Hiroshi Tanaka", location: "Tokyo, Japan", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&auto=format", text: "I used MuseoAI to plan our family trip to three museums in a week. The personalized recommendations were spot-on \u2014 even found hidden gems I never would have discovered otherwise." },
+  { id: 2, name: "Hiroshi Tanaka", location: "Tokyo, Japan", avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=80&h=80&fit=crop&auto=format", text: "I used MuseoAI to plan our family trip to three museums in a week. The personalized recommendations were spot-on \u2014 even found hidden gems I never would have discovered otherwise." },
   { id: 3, name: "Amelia Johnson", location: "New York, USA", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=80&h=80&fit=crop&auto=format", text: "The community guides feature is brilliant. I shared my Met itinerary and got 200+ likes. It's wonderful to contribute to a community of museum enthusiasts around the world." },
 ];
 

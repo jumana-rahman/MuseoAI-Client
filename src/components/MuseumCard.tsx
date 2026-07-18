@@ -43,6 +43,8 @@ export default function MuseumCard({ museum, skeleton }: Props) {
 
   const isFav = favoriteIds.has(museum.id);
 
+  const FALLBACK_IMG = "https://images.unsplash.com/photo-1572947650440-e8a97ef053b2?w=800&h=500&fit=crop&auto=format";
+
   return (
     <div className="museum-card rounded-2xl overflow-hidden bg-white shadow-warm border border-[#EDD9BC] flex flex-col">
       <div className="relative h-48 bg-[#EDD9BC]">
@@ -51,6 +53,7 @@ export default function MuseumCard({ museum, skeleton }: Props) {
           alt={museum.title}
           className="w-full h-full object-cover"
           loading="lazy"
+          onError={(e) => { (e.target as HTMLImageElement).src = FALLBACK_IMG; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
         <div className="absolute top-3 left-3">

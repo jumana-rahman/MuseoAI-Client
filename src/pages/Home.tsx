@@ -366,7 +366,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {latestGuides.slice(0, 6).map((guide) => (
-              <div key={guide._id} className="bg-[#3A2420] rounded-2xl overflow-hidden border border-[#6D4C41] hover:border-[#D8B892] transition-colors">
+              <Link key={guide._id} to={`/guides/${guide._id}`} className="block bg-[#3A2420] rounded-2xl overflow-hidden border border-[#6D4C41] hover:border-[#D8B892] transition-colors">
                 <div className="relative h-40 bg-[#6D4C41]">
                   <img src={guide.coverImage} alt={guide.title} className="w-full h-full object-cover opacity-80" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#3A2420]/60 to-transparent" />
@@ -387,7 +387,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </motion.div>

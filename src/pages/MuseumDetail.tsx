@@ -113,7 +113,7 @@ export default function MuseumDetail() {
 
   const handleToggleFavorite = () => {
     if (!user) return navigate("/login");
-    toggleFav.mutate({ museumId: museum.id, isFavoted: isFav });
+    toggleFav.mutate({ museumId: museum.id, isFavorited: isFav });
   };
 
   const tabs = ["overview", "history", "facilities", "guides", "reviews"];
@@ -236,7 +236,7 @@ export default function MuseumDetail() {
                   </div>
                 ) : (
                   guides.map((g) => (
-                    <div key={g._id} className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm hover:shadow-warm-lg transition-shadow">
+                    <Link key={g._id} to={`/guides/${g._id}`} className="block bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm hover:shadow-warm-lg transition-shadow">
                       <div className="flex gap-2 mb-2">
                         <span className="bg-[#EDD9BC] text-[#4E342E] text-xs px-2 py-0.5 rounded-full">{g.targetAudience}</span>
                         <span className="bg-[#EDD9BC] text-[#4E342E] text-xs px-2 py-0.5 rounded-full">{g.visitDuration}</span>
@@ -249,7 +249,7 @@ export default function MuseumDetail() {
                           <Heart className="w-3.5 h-3.5 fill-[#D8B892]" />{g.likes}
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))
                 )}
               </div>

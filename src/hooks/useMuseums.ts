@@ -63,7 +63,6 @@ export function useFavoriteMuseumIds() {
 
 export function useToggleFavorite() {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ museumId, isFavorited }: { museumId: string; isFavorited: boolean }) => {
@@ -75,6 +74,5 @@ export function useToggleFavorite() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
-    enabled: !!user,
   });
 }

@@ -2,11 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate, Routes, Route, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, BookOpen, PlusCircle, Heart, User, Menu, X,
-  Trash2, Eye, Sparkles, ChevronRight, Star, MapPin, RefreshCw
+  Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { MUSEUMS } from "../data/museums";
-import { GUIDES } from "../data/guides";
+import { useMyGuides, useCreateGuide, useDeleteGuide, useAIGuideGenerate } from "../hooks/useGuides";
+import type { Guide } from "../services/guides";
+import type { Museum } from "../services/museums";
+import { useMuseums } from "../hooks/useMuseums";
+import { useFavorites } from "../hooks/useMuseums";
 import { motion } from "framer-motion";
 
 const AUDIENCES = ["Families", "Students", "Tourists", "Researchers", "Art Lovers"];
@@ -107,40 +110,67 @@ export default function Dashboard() {
 }
 
 function Overview() {
-  const { user, favorites, aiConversationCount } = useAuth();
-  const userGuides = GUIDES.filter((g) => g.authorId === "u_demo" || g.authorId === user?.id);
+  const { user } = useAuth();
+  const { data: myGuides, isLoading: guidesLoading } = useMyGuides();
+  const { data: favorites, isLoading: favsLoading } = useFavorites();
+
+  const guideCount = myGuides?.length ?? 0;
+  const favCount = favorites?.length ?? 0;
 
   return (
     <div>
       <h1 className="font-display text-2xl text-[#4E342E] font-bold mb-6">Welcome back, {user?.name.split(" ")[0]}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <StatCard label="Published Guides" value={userGuides.length} icon={<BookOpen className="w-5 h-5" />} color="bg-[#EDD9BC]" textColor="text-[#A65E2E]" />
-        <StatCard label="Favorite Museums" value={favorites.length} icon={<Heart className="w-5 h-5" />} color="bg-[#EDD9BC]" textColor="text-[#A65E2E]" />
-        <StatCard label="AI Conversations" value={aiConversationCount} icon={<Sparkles className="w-5 h-5" />} color="bg-[#EDD9BC]" textColor="text-[#A65E2E]" />
+        <StatCard
+          label="Published Guides"
+          value={guidesLoading ? undefined : guideCount}
+          icon={<BookOpen className="w-5 h-5" />}
+          color="bg-[#EDD9BC]"
+          textColor="text-[#A65E2E]"
+        />
+        <StatCard
+          label="Favorite Museums"
+          value={favsLoading ? undefined : favCount}
+          icon={<Heart className="w-5 h-5" />}
+          color="bg-[#EDD9BC]"
+          textColor="text-[#A65E2E]"
+        />
+        <StatCard
+          label="Museums Explored"
+          value={0}
+          icon={<Sparkles className="w-5 h-5" />}
+          color="bg-[#EDD9BC]"
+          textColor="text-[#A65E2E]"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-[#4E342E] font-semibold">Recent Activity</h2>
+            <h2 className="font-display text-[#4E342E] font-semibold">My Guides</h2>
           </div>
-          <div className="space-y-3">
-            {[
-              { action: "Favorited", target: "The Louvre Museum", time: "2 hours ago", icon: <Heart className="w-4 h-4 text-[#A65E2E]" /> },
-              { action: "Published guide", target: "A Perfect Half-Day at the Louvre", time: "Yesterday", icon: <BookOpen className="w-4 h-4 text-[#A65E2E]" /> },
-              { action: "Reviewed", target: "Uffizi Gallery", time: "3 days ago", icon: <Star className="w-4 h-4 text-[#A65E2E]" /> },
-              { action: "AI chat with", target: "Tokyo National Museum", time: "1 week ago", icon: <Sparkles className="w-4 h-4 text-[#A65E2E]" /> },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm">
-                <div className="w-7 h-7 bg-[#EDD9BC] rounded-lg flex items-center justify-center flex-shrink-0">{item.icon}</div>
-                <div className="flex-1 min-w-0">
-                  <span className="text-[#8B857C]">{item.action} </span>
-                  <span className="font-medium text-[#4E342E]">{item.target}</span>
+          {guidesLoading ? (
+            <div className="flex items-center justify-center py-8"><Loader2 className="w-5 h-5 text-[#A65E2E] animate-spin" /></div>
+          ) : guideCount === 0 ? (
+            <div className="text-center py-8">
+              <BookOpen className="w-8 h-8 text-[#EDD9BC] mx-auto mb-2" />
+              <p className="text-[#8B857C] text-sm">No guides yet. Share your museum knowledge!</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {myGuides!.slice(0, 5).map((guide: Guide) => (
+                <div key={guide._id} className="flex items-center gap-3 text-sm">
+                  <div className="w-7 h-7 bg-[#EDD9BC] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <BookOpen className="w-4 h-4 text-[#A65E2E]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-medium text-[#4E342E] line-clamp-1">{guide.title}</span>
+                    <span className="text-[#8B857C] text-xs ml-1">at {guide.museumName}</span>
+                  </div>
                 </div>
-                <span className="text-[#8B857C] text-xs flex-shrink-0">{item.time}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-5">
@@ -169,11 +199,15 @@ function Overview() {
   );
 }
 
-function StatCard({ label, value, icon, color, textColor }: { label: string; value: number; icon: React.ReactNode; color: string; textColor: string }) {
+function StatCard({ label, value, icon, color, textColor }: { label: string; value: number | undefined; icon: React.ReactNode; color: string; textColor: string }) {
   return (
     <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-5">
       <div className={`w-10 h-10 ${color} rounded-xl flex items-center justify-center ${textColor} mb-3`}>{icon}</div>
-      <p className="font-display text-3xl font-bold text-[#4E342E]">{value}</p>
+      {value === undefined ? (
+        <div className="h-9 w-12 bg-[#EDD9BC] rounded animate-pulse" />
+      ) : (
+        <p className="font-display text-3xl font-bold text-[#4E342E]">{value}</p>
+      )}
       <p className="text-[#8B857C] text-sm mt-0.5">{label}</p>
     </div>
   );
@@ -185,32 +219,55 @@ function AddGuide() {
     title: "", museumId: "", targetAudience: "", visitDuration: "", shortDescription: "", guideContent: "", coverImage: "",
   });
   const [aiMode, setAiMode] = useState(false);
-  const [aiGenerating, setAiGenerating] = useState(false);
   const [interests, setInterests] = useState<string[]>([]);
   const [outputLength, setOutputLength] = useState("medium");
-  const [submitted, setSubmitted] = useState(false);
+
+  const { data: museumsData, isLoading: museumsLoading } = useMuseums({ limit: 100 });
+  const museums = museumsData?.museums ?? [];
+
+  const createGuide = useCreateGuide();
+  const aiGenerate = useAIGuideGenerate();
 
   const generateAI = async () => {
     if (!form.museumId || !form.targetAudience || !form.visitDuration) return;
-    setAiGenerating(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    const museum = MUSEUMS.find((m) => m.id === form.museumId);
-    setForm((f) => ({
-      ...f,
-      title: `A ${f.visitDuration} Guide to ${museum?.title} for ${f.targetAudience}`,
-      shortDescription: `A curated ${f.visitDuration} itinerary at ${museum?.title} tailored for ${f.targetAudience.toLowerCase()}, focusing on ${interests.join(", ") || "the highlights"}.`,
-      guideContent: `## Getting Started\n\nArrive at ${museum?.title} when it opens to get the best experience. ${museum?.visitorTips[0] || ""}\n\n## Must-See Areas\n\n${museum?.description}\n\n## Suggested Route\n\nBegin at the main entrance and collect a museum map. Follow the recommended route for ${f.targetAudience.toLowerCase()} visitors. ${museum?.visitorTips[1] || ""}\n\n## Visitor Tips\n\n${museum?.visitorTips.slice(0, 3).map((t, i) => `${i + 1}. ${t}`).join("\n")}\n\n## Estimated Time\n\nTotal duration: ${f.visitDuration}`,
-    }));
-    setAiGenerating(false);
-    setAiMode(false);
+    try {
+      const result = await aiGenerate.mutateAsync({
+        museumId: form.museumId,
+        targetAudience: form.targetAudience,
+        visitDuration: form.visitDuration,
+        interests: interests.length ? interests : undefined,
+        length: outputLength,
+      }) as { title: string; shortDescription: string; guideContent: string };
+      setForm((f) => ({
+        ...f,
+        title: result.title,
+        shortDescription: result.shortDescription,
+        guideContent: result.guideContent,
+      }));
+      setAiMode(false);
+    } catch {
+      // Error handled by mutation
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    try {
+      await createGuide.mutateAsync({
+        title: form.title,
+        museumId: form.museumId,
+        targetAudience: form.targetAudience,
+        visitDuration: form.visitDuration,
+        shortDescription: form.shortDescription,
+        guideContent: form.guideContent,
+        coverImage: form.coverImage || undefined,
+      });
+    } catch {
+      // Error handled by mutation
+    }
   };
 
-  if (submitted) {
+  if (createGuide.isSuccess) {
     return (
       <div className="text-center py-16">
         <div className="text-5xl mb-4">🎉</div>
@@ -218,7 +275,10 @@ function AddGuide() {
         <p className="text-[#8B857C] mb-6">Your museum guide is now live for the community to discover.</p>
         <div className="flex justify-center gap-3">
           <Link to="/dashboard/my-guides" className="bg-[#4E342E] text-[#F8F5F0] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#A65E2E] transition-colors">View My Guides</Link>
-          <button onClick={() => { setSubmitted(false); setForm({ title: "", museumId: "", targetAudience: "", visitDuration: "", shortDescription: "", guideContent: "", coverImage: "" }); }} className="border border-[#EDD9BC] text-[#4E342E] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#EDD9BC] transition-colors">
+          <button onClick={() => {
+            createGuide.reset();
+            setForm({ title: "", museumId: "", targetAudience: "", visitDuration: "", shortDescription: "", guideContent: "", coverImage: "" });
+          }} className="border border-[#EDD9BC] text-[#4E342E] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#EDD9BC] transition-colors">
             Write Another
           </button>
         </div>
@@ -237,6 +297,12 @@ function AddGuide() {
           <Sparkles className="w-4 h-4" /> AI Guide Writer
         </button>
       </div>
+
+      {createGuide.isError && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-4">
+          {(createGuide.error as Error)?.message || "Failed to create guide. Please try again."}
+        </div>
+      )}
 
       {/* AI Panel */}
       {aiMode && (
@@ -294,12 +360,15 @@ function AddGuide() {
             </div>
             <button
               onClick={generateAI}
-              disabled={!form.museumId || !form.targetAudience || !form.visitDuration || aiGenerating}
+              disabled={!form.museumId || !form.targetAudience || !form.visitDuration || aiGenerate.isPending}
               className="flex items-center gap-2 bg-[#D8B892] text-[#4E342E] px-4 py-2 rounded-xl text-sm font-semibold hover:bg-[#c9a67d] transition-colors disabled:opacity-50"
             >
-              {aiGenerating ? <><RefreshCw className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate</>}
+              {aiGenerate.isPending ? <><RefreshCw className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate</>}
             </button>
           </div>
+          {aiGenerate.isError && (
+            <p className="text-red-300 text-xs mt-2">{(aiGenerate.error as Error)?.message || "AI generation failed. Please try again."}</p>
+          )}
         </div>
       )}
 
@@ -312,7 +381,11 @@ function AddGuide() {
           <FormField label="Museum *" required>
             <select value={form.museumId} onChange={(e) => setForm((f) => ({ ...f, museumId: e.target.value }))} className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2.5 text-sm text-[#4E342E] focus:outline-none focus:border-[#D8B892]" required>
               <option value="">Select a museum</option>
-              {MUSEUMS.map((m) => <option key={m.id} value={m.id}>{m.title}</option>)}
+              {museumsLoading ? (
+                <option disabled>Loading museums...</option>
+              ) : (
+                museums.map((m: Museum) => <option key={m.id} value={m.id}>{m.title}</option>)
+              )}
             </select>
           </FormField>
           <FormField label="Target Audience *" required>
@@ -337,8 +410,8 @@ function AddGuide() {
           <textarea value={form.guideContent} onChange={(e) => setForm((f) => ({ ...f, guideContent: e.target.value }))} rows={8} placeholder="Write your detailed museum guide here. Include itinerary, must-see exhibits, tips, and recommended route..." className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2.5 text-sm text-[#4E342E] placeholder-[#8B857C] focus:outline-none focus:border-[#D8B892] resize-none" required />
         </FormField>
 
-        <button type="submit" className="w-full bg-[#4E342E] text-[#F8F5F0] py-3 rounded-2xl font-semibold hover:bg-[#A65E2E] transition-colors">
-          Publish Guide
+        <button type="submit" disabled={createGuide.isPending} className="w-full bg-[#4E342E] text-[#F8F5F0] py-3 rounded-2xl font-semibold hover:bg-[#A65E2E] transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+          {createGuide.isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Publishing...</> : "Publish Guide"}
         </button>
       </form>
     </div>
@@ -357,13 +430,12 @@ function FormField({ label, required, children }: { label: string; required?: bo
 }
 
 function MyGuides() {
-  const { user: currentUser } = useAuth();
-  const userGuides = GUIDES.filter((g) => g.authorId === "u_demo" || (currentUser && g.authorId === currentUser.id));
-  const [guides, setGuides] = useState(userGuides);
+  const { data: guides, isLoading, error } = useMyGuides();
+  const deleteGuide = useDeleteGuide();
 
-  const deleteGuide = (id: string) => {
+  const handleDelete = (id: string) => {
     if (confirm("Delete this guide? This cannot be undone.")) {
-      setGuides((prev) => prev.filter((g) => g.id !== id));
+      deleteGuide.mutate(id);
     }
   };
 
@@ -376,7 +448,16 @@ function MyGuides() {
         </Link>
       </div>
 
-      {guides.length === 0 ? (
+      {isLoading ? (
+        <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-12 text-center">
+          <Loader2 className="w-8 h-8 text-[#A65E2E] animate-spin mx-auto" />
+          <p className="text-[#8B857C] mt-3 text-sm">Loading your guides...</p>
+        </div>
+      ) : error ? (
+        <div className="bg-white rounded-2xl border border-red-200 p-12 text-center">
+          <p className="text-red-600 text-sm">Failed to load guides. Please try again.</p>
+        </div>
+      ) : !guides || guides.length === 0 ? (
         <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-12 text-center">
           <BookOpen className="w-10 h-10 text-[#D8B892] mx-auto mb-3" />
           <h3 className="font-display text-[#4E342E] text-lg font-semibold mb-2">No guides yet</h3>
@@ -396,20 +477,24 @@ function MyGuides() {
               </tr>
             </thead>
             <tbody>
-              {guides.map((guide, i) => (
-                <tr key={guide.id} className={`border-b border-[#EDD9BC] last:border-0 ${i % 2 === 0 ? "" : "bg-[#F8F5F0]"}`}>
+              {guides.map((guide: Guide, i: number) => (
+                <tr key={guide._id} className={`border-b border-[#EDD9BC] last:border-0 ${i % 2 === 0 ? "" : "bg-[#F8F5F0]"}`}>
                   <td className="px-4 py-3">
                     <p className="font-medium text-[#4E342E] text-sm line-clamp-1">{guide.title}</p>
                   </td>
                   <td className="px-4 py-3 text-[#5D4037] text-sm">{guide.museumName}</td>
                   <td className="px-4 py-3"><span className="bg-[#EDD9BC] text-[#4E342E] text-xs px-2 py-0.5 rounded-full">{guide.targetAudience}</span></td>
-                  <td className="px-4 py-3 text-[#8B857C] text-xs">{guide.createdAt}</td>
+                  <td className="px-4 py-3 text-[#8B857C] text-xs">{new Date(guide.createdAt).toLocaleDateString()}</td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
                       <Link to={`/museums/${guide.museumId}`} className="w-7 h-7 bg-[#EDD9BC] rounded-lg flex items-center justify-center text-[#4E342E] hover:bg-[#D8B892] transition-colors">
                         <Eye className="w-3.5 h-3.5" />
                       </Link>
-                      <button onClick={() => deleteGuide(guide.id)} className="w-7 h-7 bg-red-50 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors">
+                      <button
+                        onClick={() => handleDelete(guide._id)}
+                        disabled={deleteGuide.isPending}
+                        className="w-7 h-7 bg-red-50 rounded-lg flex items-center justify-center text-red-500 hover:bg-red-100 transition-colors disabled:opacity-50"
+                      >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>

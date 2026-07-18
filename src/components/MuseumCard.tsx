@@ -1,7 +1,21 @@
 import { Link } from "react-router-dom";
 import { Star, MapPin, Heart } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import type { Museum } from "../data/museums";
+import { useFavoriteMuseumIds, useToggleFavorite } from "../hooks/useMuseums";
+
+type Museum = {
+  id: string;
+  title: string;
+  city: string;
+  country: string;
+  category: string;
+  description: string;
+  ticketPrice: number;
+  ticketType: "Free" | "Paid" | "Premium";
+  coverImage: string;
+  rating: number;
+  reviewCount: number;
+};
 
 type Props = {
   museum: Museum;
@@ -9,7 +23,9 @@ type Props = {
 };
 
 export default function MuseumCard({ museum, skeleton }: Props) {
-  const { user, favorites, toggleFavorite } = useAuth();
+  const { user } = useAuth();
+  const favoriteIds = useFavoriteMuseumIds();
+  const toggleFavorite = useToggleFavorite();
 
   if (skeleton) {
     return (
@@ -25,7 +41,7 @@ export default function MuseumCard({ museum, skeleton }: Props) {
     );
   }
 
-  const isFav = favorites.includes(museum.id);
+  const isFav = favoriteIds.has(museum.id);
 
   return (
     <div className="museum-card rounded-2xl overflow-hidden bg-white shadow-warm border border-[#EDD9BC] flex flex-col">
@@ -49,7 +65,7 @@ export default function MuseumCard({ museum, skeleton }: Props) {
         </div>
         {user && (
           <button
-            onClick={(e) => { e.preventDefault(); toggleFavorite(museum.id); }}
+            onClick={(e) => { e.preventDefault(); toggleFavorite.mutate({ museumId: museum.id, isFavorited: isFav }); }}
             className={`absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all ${isFav ? "bg-[#A65E2E] text-white" : "bg-white/90 text-[#8B857C] hover:bg-[#A65E2E] hover:text-white"}`}
           >
             <Heart className={`w-4 h-4 ${isFav ? "fill-current" : ""}`} />

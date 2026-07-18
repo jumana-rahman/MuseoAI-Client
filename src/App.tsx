@@ -13,6 +13,7 @@ import Register from "./pages/Register";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Recommendations from "./pages/Recommendations";
+import GuideDetail from "./pages/GuideDetail";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -39,6 +40,7 @@ function AppRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/museums" element={<Museums />} />
           <Route path="/museums/:id" element={<MuseumDetail />} />
+          <Route path="/guides/:id" element={<GuideDetail />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />

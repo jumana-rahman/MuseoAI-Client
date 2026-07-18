@@ -8,13 +8,13 @@ import {
   ChevronDown, Sparkles, MessageCircle, Map, Heart, Star, ArrowRight,
   ChevronLeft, ChevronRight, Plus, Minus
 } from "lucide-react";
-import { MUSEUMS, CATEGORIES, STATS_BY_CATEGORY, STATS_BY_COUNTRY, POPULAR_COUNTRIES, TESTIMONIALS, FAQS } from "../data/museums";
-import { GUIDES } from "../data/guides";
+import { CATEGORIES, POPULAR_COUNTRIES, TESTIMONIALS, FAQS } from "../data/museums";
 import MuseumCard from "../components/MuseumCard";
 import { useAuth } from "../context/AuthContext";
+import { useFeaturedMuseums, useMuseumStats } from "../hooks/useMuseums";
+import { useLatestGuides } from "../hooks/useGuides";
 import { motion } from "framer-motion";
 
-const FEATURED = MUSEUMS.filter((m) => m.featured).slice(0, 8);
 const COLORS = ["#D8B892", "#A65E2E", "#4E342E", "#8B857C", "#EDD9BC", "#6D4C41", "#C9A67D", "#7A4420"];
 
 export default function Home() {
@@ -25,6 +25,12 @@ export default function Home() {
   const [testimonialIdx, setTestimonialIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+
+  const { data: featuredMuseums = [] } = useFeaturedMuseums();
+  const { data: latestGuides = [] } = useLatestGuides();
+  const { categoryQuery, countryQuery } = useMuseumStats();
+  const statsByCategory = categoryQuery.data || [];
+  const statsByCountry = countryQuery.data || [];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -165,7 +171,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {FEATURED.map((m) => (
+            {featuredMuseums.map((m) => (
               <MuseumCard key={m.id} museum={m} />
             ))}
           </div>
@@ -298,14 +304,14 @@ export default function Home() {
             <div className="bg-white rounded-2xl p-6 shadow-warm border border-[#EDD9BC]">
               <h3 className="font-display text-[#4E342E] font-semibold text-lg mb-6">Museums by Category</h3>
               <ResponsiveContainer width="100%" height={260}>
-                <BarChart data={STATS_BY_CATEGORY} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <BarChart data={statsByCategory} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <XAxis dataKey="category" tick={{ fontSize: 11, fill: "#8B857C" }} />
                   <YAxis tick={{ fontSize: 11, fill: "#8B857C" }} />
                   <Tooltip
                     contentStyle={{ backgroundColor: "#F8F5F0", border: "1px solid #EDD9BC", borderRadius: 12, fontSize: 12 }}
                   />
                   <Bar dataKey="count" radius={[6, 6, 0, 0]}>
-                    {STATS_BY_CATEGORY.map((_, i) => (
+                    {statsByCategory.map((_: unknown, i: number) => (
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Bar>
@@ -318,7 +324,7 @@ export default function Home() {
               <ResponsiveContainer width="100%" height={260}>
                 <PieChart>
                   <Pie
-                    data={STATS_BY_COUNTRY}
+                    data={statsByCountry}
                     dataKey="count"
                     nameKey="country"
                     cx="50%"
@@ -327,7 +333,7 @@ export default function Home() {
                     label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(0)}%`}
                     labelLine={false}
                   >
-                    {STATS_BY_COUNTRY.map((_, i) => (
+                    {statsByCountry.map((_: unknown, i: number) => (
                       <Cell key={i} fill={COLORS[i % COLORS.length]} />
                     ))}
                   </Pie>
@@ -359,8 +365,8 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {GUIDES.slice(0, 6).map((guide) => (
-              <div key={guide.id} className="bg-[#3A2420] rounded-2xl overflow-hidden border border-[#6D4C41] hover:border-[#D8B892] transition-colors">
+            {latestGuides.slice(0, 6).map((guide) => (
+              <div key={guide._id} className="bg-[#3A2420] rounded-2xl overflow-hidden border border-[#6D4C41] hover:border-[#D8B892] transition-colors">
                 <div className="relative h-40 bg-[#6D4C41]">
                   <img src={guide.coverImage} alt={guide.title} className="w-full h-full object-cover opacity-80" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#3A2420]/60 to-transparent" />
@@ -372,12 +378,9 @@ export default function Home() {
                   <h4 className="font-display text-[#F8F5F0] font-semibold text-sm leading-tight mb-1 line-clamp-2">
                     {guide.title}
                   </h4>
-                  <p className="text-[#8B857C] text-xs mb-3">{guide.museumName} · {guide.museumCountry}</p>
+                  <p className="text-[#8B857C] text-xs mb-3">{guide.museumName || "Museum"} · {guide.museumCountry || ""}</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <img src={guide.authorAvatar} alt={guide.authorName} className="w-6 h-6 rounded-full object-cover" />
-                      <span className="text-[#8B857C] text-xs">{guide.authorName}</span>
-                    </div>
+                    <span className="text-[#8B857C] text-xs">By author</span>
                     <div className="flex items-center gap-1 text-[#D8B892] text-xs">
                       <Heart className="w-3.5 h-3.5 fill-[#D8B892]" />
                       {guide.likes}

@@ -22,7 +22,7 @@ export default function Register() {
     const ok = await register(form.name, form.email, form.password);
     setLoading(false);
     if (ok) navigate("/dashboard");
-    else setError("Registration failed. Please try again.");
+    else setError("Registration failed. Check console for details, or try a different email.");
   };
 
   return (

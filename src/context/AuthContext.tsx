@@ -43,8 +43,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const result = await authClient.signIn.email({ email, password });
-      return !result.error;
-    } catch {
+      if (result.error) {
+        console.error("[Auth] Login error:", result.error);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error("[Auth] Login exception:", err);
       return false;
     }
   };
@@ -67,8 +72,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
       });
-      return !result.error;
-    } catch {
+      if (result.error) {
+        console.error("[Auth] Register error:", result.error);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      console.error("[Auth] Register exception:", err);
       return false;
     }
   };

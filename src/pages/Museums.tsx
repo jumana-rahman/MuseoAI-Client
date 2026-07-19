@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Landmark } from "lucide-react";
 import MuseumCard from "../components/MuseumCard";
@@ -42,7 +42,12 @@ export default function Museums() {
     });
   };
 
-  const debouncedSearch = useMemo(() => search, [search]);
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const { data, isLoading } = useMuseums({
     search: debouncedSearch || undefined,

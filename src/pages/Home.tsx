@@ -148,7 +148,7 @@ export default function Home() {
                   </Link>
                 ) : (
                   <button
-                    onClick={() => navigate("/museums/louvre")}
+                    onClick={() => navigate("/login", { state: { from: "/" } })}
                     className="bg-transparent border-2 border-[#D8B892] text-[#D8B892] font-semibold px-6 py-3 rounded-2xl hover:bg-[#D8B892]/10 transition-colors flex items-center gap-2"
                   >
                     <MessageCircle className="w-4 h-4" /> Try AI Guide

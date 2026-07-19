@@ -341,6 +341,11 @@ function AddGuide() {
             <Sparkles className="w-5 h-5 text-[#D8B892]" />
             <span className="font-display font-semibold">AI Guide Writer</span>
           </div>
+          {!form.museumId && (
+            <div className="bg-[#D8B892]/20 border border-[#D8B892]/40 rounded-xl px-3 py-2 mb-4 text-[#D8B892] text-xs">
+              Select a museum from the form below to start generating a guide
+            </div>
+          )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
             <div>
               <label className="block text-xs text-[#8B857C] mb-1">Target Audience *</label>

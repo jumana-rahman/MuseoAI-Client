@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sparkles, RefreshCw, Star, MapPin, Ticket, ThumbsUp, ThumbsDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAIRecommendations, useRecordSignal } from "../hooks/useAI";
+import { toast } from "sonner";
 
 const INTERESTS = ["Art & Painting", "Ancient History", "Science & Technology", "Natural History", "Military History", "Architecture", "World Cultures", "Modern Art"];
 const COUNTRIES = ["Any", "France", "Italy", "Egypt", "Japan", "USA", "United Kingdom", "Germany", "Spain"];
@@ -53,6 +54,12 @@ export default function Recommendations() {
   };
 
   const results = getRecommendations.data || [];
+
+  useEffect(() => {
+    if (getRecommendations.isError) {
+      toast.error((getRecommendations.error as Error)?.message || "Failed to get recommendations. Please try again.");
+    }
+  }, [getRecommendations.isError, getRecommendations.error]);
 
   return (
     <div className="min-h-screen bg-[#F8F5F0] pt-20">
@@ -126,12 +133,6 @@ export default function Recommendations() {
             </div>
           </div>
         </div>
-
-        {getRecommendations.isError && (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-8 text-red-700 text-sm">
-            {(getRecommendations.error as Error)?.message || "Failed to get recommendations. Please try again."}
-          </div>
-        )}
 
         {getRecommendations.isSuccess && results.length === 0 && (
           <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-8 text-center mb-8">

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Providers from "./providers/Providers";
 import Navbar from "./components/Navbar";
@@ -92,6 +93,7 @@ function NotFound() {
 export default function App() {
   return (
     <Providers>
+      <Toaster position="top-right" richColors closeButton />
       <AuthProvider>
         <AppRoutes />
       </AuthProvider>

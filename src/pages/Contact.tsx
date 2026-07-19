@@ -3,6 +3,7 @@ import { Mail, MapPin, Clock, MessageSquare, Send, MailOpen } from "lucide-react
 import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "../lib/api";
+import { toast } from "sonner";
 
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
@@ -16,6 +17,7 @@ export default function Contact() {
         headers: { "Content-Type": "application/json" },
       }),
     onSuccess: () => setSent(true),
+    onError: () => toast.error("Failed to send message. Please try again."),
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -73,11 +75,6 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-7 space-y-4">
-                {submit.isError && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-2 text-sm">
-                    Failed to send message. Please try again.
-                  </div>
-                )}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-[#8B857C] uppercase tracking-wide mb-1.5">Name *</label>

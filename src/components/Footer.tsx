@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Landmark, Mail } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "../lib/api";
+import { toast } from "sonner";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
-  const [subMsg, setSubMsg] = useState("");
-  const queryClient = useQueryClient();
 
   const subscribe = useMutation({
     mutationFn: (e: React.FormEvent) => {
@@ -19,13 +18,11 @@ export default function Footer() {
       });
     },
     onSuccess: (data: any) => {
-      setSubMsg(data?.message || "Subscribed!");
+      toast.success(data?.message || "Subscribed!");
       setEmail("");
-      setTimeout(() => setSubMsg(""), 4000);
     },
     onError: () => {
-      setSubMsg("Failed to subscribe. Try again.");
-      setTimeout(() => setSubMsg(""), 4000);
+      toast.error("Failed to subscribe. Try again.");
     },
   });
 
@@ -95,7 +92,6 @@ export default function Footer() {
                     {subscribe.isPending ? "..." : "Subscribe"}
                   </button>
                 </form>
-                {subMsg && <p className="text-xs text-[#D8B892] mt-1">{subMsg}</p>}
               </li>
             </ul>
           </div>

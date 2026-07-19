@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Landmark, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 export default function Login() {
   const { login, loginDemo, loginGoogle } = useAuth();
@@ -14,16 +15,14 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
     const ok = await login(email, password);
     setLoading(false);
     if (ok) navigate(from, { replace: true });
-    else setError("Invalid email or password. Please try again.");
+    else toast.error("Invalid email or password. Please try again.");
   };
 
   const handleDemo = () => {
@@ -104,8 +103,6 @@ export default function Login() {
             <span className="text-[#8B857C] text-xs">or sign in with email</span>
             <div className="flex-1 h-px bg-[#EDD9BC]" />
           </div>
-
-          {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-4">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

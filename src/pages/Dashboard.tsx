@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, Routes, Route } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -12,6 +12,7 @@ import type { Museum } from "../services/museums";
 import { useMuseums, useFavorites, usePlatformStats } from "../hooks/useMuseums";
 import { apiRequest } from "../lib/api";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 const AUDIENCES = ["Families", "Students", "Tourists", "Researchers", "Art Lovers"];
 const INTERESTS = ["Paintings", "Sculptures", "Ancient History", "Modern Art", "Architecture", "Science", "Culture", "War History"];
@@ -258,6 +259,18 @@ function AddGuide() {
   const createGuide = useCreateGuide();
   const aiGenerate = useAIGuideGenerate();
 
+  useEffect(() => {
+    if (createGuide.isError) {
+      toast.error((createGuide.error as Error)?.message || "Failed to create guide. Please try again.");
+    }
+  }, [createGuide.isError, createGuide.error]);
+
+  useEffect(() => {
+    if (aiGenerate.isError) {
+      toast.error((aiGenerate.error as Error)?.message || "AI generation failed. Please try again.");
+    }
+  }, [aiGenerate.isError, aiGenerate.error]);
+
   const generateAI = async () => {
     if (!form.museumId || !form.targetAudience || !form.visitDuration) return;
     try {
@@ -328,12 +341,6 @@ function AddGuide() {
         </button>
       </div>
 
-      {createGuide.isError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-4">
-          {(createGuide.error as Error)?.message || "Failed to create guide. Please try again."}
-        </div>
-      )}
-
       {/* AI Panel */}
       {aiMode && (
         <div className="bg-gradient-to-br from-[#4E342E] to-[#3A2420] rounded-2xl p-5 mb-6 text-[#F8F5F0]">
@@ -401,9 +408,6 @@ function AddGuide() {
               {aiGenerate.isPending ? <><RefreshCw className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate</>}
             </button>
           </div>
-          {aiGenerate.isError && (
-            <p className="text-red-300 text-xs mt-2">{(aiGenerate.error as Error)?.message || "AI generation failed. Please try again."}</p>
-          )}
         </div>
       )}
 
@@ -468,6 +472,12 @@ function MyGuides() {
   const { data: guides, isLoading, error } = useMyGuides();
   const deleteGuide = useDeleteGuide();
 
+  useEffect(() => {
+    if (error) {
+      toast.error("Failed to load guides. Please try again.");
+    }
+  }, [error]);
+
   const handleDelete = (id: string) => {
     if (confirm("Delete this guide? This cannot be undone.")) {
       deleteGuide.mutate(id);
@@ -489,8 +499,13 @@ function MyGuides() {
           <p className="text-[#8B857C] mt-3 text-sm">Loading your guides...</p>
         </div>
       ) : error ? (
-        <div className="bg-white rounded-2xl border border-red-200 p-12 text-center">
-          <p className="text-red-600 text-sm">Failed to load guides. Please try again.</p>
+        <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-12 text-center">
+          <BookOpen className="w-10 h-10 text-[#EDD9BC] mx-auto mb-3" />
+          <h3 className="font-display text-[#4E342E] text-lg font-semibold mb-2">Couldn't load guides</h3>
+          <p className="text-[#8B857C] text-sm mb-5">Something went wrong. Please try again.</p>
+          <Link to="/dashboard/add-guide" className="bg-[#4E342E] text-[#F8F5F0] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#A65E2E] transition-colors">
+            Write a Guide
+          </Link>
         </div>
       ) : !guides || guides.length === 0 ? (
         <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-12 text-center">
@@ -553,15 +568,13 @@ function ProfileSettings() {
     photo: user?.photo || "",
   });
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     await updateProfile(form);
     setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    toast.success("Profile updated!");
   };
 
   return (
@@ -591,7 +604,7 @@ function ProfileSettings() {
             <textarea value={form.bio} onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))} rows={3} maxLength={200} placeholder="Tell the community about yourself..." className="w-full bg-[#F8F5F0] border border-[#EDD9BC] rounded-xl px-3 py-2.5 text-sm text-[#4E342E] placeholder-[#8B857C] focus:outline-none focus:border-[#D8B892] resize-none" />
           </FormField>
           <button type="submit" disabled={saving} className="bg-[#4E342E] text-[#F8F5F0] px-6 py-2.5 rounded-2xl text-sm font-semibold hover:bg-[#A65E2E] transition-colors disabled:opacity-60">
-            {saving ? "Saving..." : saved ? "Saved!" : "Save Changes"}
+            {saving ? "Saving..." : "Save Changes"}
           </button>
         </form>
       </div>

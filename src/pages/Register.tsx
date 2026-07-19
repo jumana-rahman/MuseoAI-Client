@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Landmark, Eye, EyeOff, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
+import { toast } from "sonner";
 
 export default function Register() {
   const { register, loginGoogle, loginDemo } = useAuth();
@@ -11,18 +12,16 @@ export default function Register() {
   const [form, setForm] = useState({ name: "", email: "", password: "", confirm: "" });
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    if (form.password !== form.confirm) { setError("Passwords do not match."); return; }
-    if (form.password.length < 6) { setError("Password must be at least 6 characters."); return; }
+    if (form.password !== form.confirm) { toast.error("Passwords do not match."); return; }
+    if (form.password.length < 6) { toast.error("Password must be at least 6 characters."); return; }
     setLoading(true);
     const ok = await register(form.name, form.email, form.password);
     setLoading(false);
     if (ok) navigate("/dashboard");
-    else setError("Registration failed. Check console for details, or try a different email.");
+    else toast.error("Registration failed. Check console for details, or try a different email.");
   };
 
   return (
@@ -91,8 +90,6 @@ export default function Register() {
             <span className="text-[#8B857C] text-xs">or register with email</span>
             <div className="flex-1 h-px bg-[#EDD9BC]" />
           </div>
-
-          {error && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm mb-4">{error}</div>}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

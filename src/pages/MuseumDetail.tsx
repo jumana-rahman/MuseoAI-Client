@@ -9,6 +9,7 @@ import { useMuseum, useRelatedMuseums, useFavoriteMuseumIds, useToggleFavorite }
 import { useMuseumGuides } from "../hooks/useGuides";
 import { useMuseumReviews, useCreateReview } from "../hooks/useReviews";
 import { aiService } from "../services/ai";
+import { toast } from "sonner";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -138,6 +139,7 @@ export default function MuseumDetail() {
       onError: (err?: Error) => {
         setStreaming(false);
         const msg = err?.message || "Sorry, the AI service is temporarily unavailable. Please try again.";
+        toast.error(msg);
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = { role: "assistant", content: msg };
@@ -153,8 +155,9 @@ export default function MuseumDetail() {
       await createReview.mutateAsync({ rating: reviewRating, review: reviewText });
       setReviewText("");
       setReviewRating(5);
+      toast.success("Review submitted!");
     } catch {
-      // Error handled by mutation
+      toast.error("Failed to submit review. Please try again.");
     }
   };
 

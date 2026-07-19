@@ -56,14 +56,15 @@ export const aiService = {
               onDone();
               return;
             }
+            let parsed: Record<string, unknown>;
             try {
-              const parsed = JSON.parse(payload);
-              if (parsed.text) onChunk(parsed.text);
-              if (parsed.conversationId !== undefined) onConversationId(parsed.conversationId);
-              if (parsed.error) throw new Error(parsed.error);
+              parsed = JSON.parse(payload);
             } catch {
-              // skip malformed chunks
+              continue;
             }
+            if (parsed.error) throw new Error(parsed.error as string);
+            if (parsed.text) onChunk(parsed.text as string);
+            if (parsed.conversationId !== undefined) onConversationId(parsed.conversationId as string | null);
           }
         }
       }

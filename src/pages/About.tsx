@@ -1,8 +1,11 @@
 import { Link } from "react-router-dom";
 import { Sparkles, MessageCircle, Map, Heart, Award, Globe, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
+import { usePlatformStats } from "../hooks/useMuseums";
 
 export default function About() {
+  const { data: stats } = usePlatformStats();
+  const museumCount = stats?.museums ?? 20;
   return (
     <div className="min-h-screen bg-[#F8F5F0] pt-16">
       {/* Hero */}
@@ -37,10 +40,10 @@ export default function About() {
           </div>
           <div className="relative">
             <div className="rounded-3xl overflow-hidden shadow-warm-lg h-72">
-              <img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=700&h=500&fit=crop&auto=format" alt="Museum gallery" className="w-full h-full object-cover" />
+              <img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=700&h=500&fit=crop&auto=format" alt="Museum gallery" className="w-full h-full object-cover" loading="lazy" />
             </div>
             <div className="absolute -bottom-4 -left-4 bg-[#D8B892] rounded-2xl px-4 py-3 shadow-warm-lg">
-              <p className="font-display text-[#4E342E] font-bold text-2xl">20+</p>
+              <p className="font-display text-[#4E342E] font-bold text-2xl">{museumCount}+</p>
               <p className="text-[#5D4037] text-xs">Curated museums</p>
             </div>
           </div>

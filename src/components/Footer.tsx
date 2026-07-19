@@ -106,7 +106,8 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} MuseoAI. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <span className="text-xs text-[#6D4C41]">Privacy Policy &middot; Terms of Service</span>
+            <Link to="/privacy" className="text-xs text-[#6D4C41] hover:text-[#D8B892] transition-colors">Privacy Policy</Link>
+            <Link to="/terms" className="text-xs text-[#6D4C41] hover:text-[#D8B892] transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

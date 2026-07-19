@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Heart, LayoutDashboard, LogOut, User, BookOpen, ChevronDown, Landmark } from "lucide-react";
+import { Menu, X, Heart, LayoutDashboard, LogOut, User, BookOpen, ChevronDown, Landmark, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -120,6 +120,7 @@ export default function Navbar() {
           <MobileLink to="/" label="Home" />
           <MobileLink to="/museums" label="Explore Museums" />
           {user && <MobileLink to="/favorites" label="Favorites" icon={<Heart className="w-4 h-4" />} />}
+          {user && <MobileLink to="/recommendations" label="AI Picks" icon={<Sparkles className="w-4 h-4" />} />}
           {user && <MobileLink to="/dashboard" label="Dashboard" icon={<LayoutDashboard className="w-4 h-4" />} />}
           <MobileLink to="/about" label="About" />
           <MobileLink to="/contact" label="Contact" />

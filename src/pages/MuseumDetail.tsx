@@ -2,13 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import {
   MapPin, Clock, Ticket, Star, Heart, Send, Sparkles,
-  MessageCircle, RefreshCw, X, BookOpen, ArrowLeft
+  MessageCircle, RefreshCw, X, BookOpen, ArrowLeft, Landmark
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useMuseum, useRelatedMuseums, useFavoriteMuseumIds, useToggleFavorite } from "../hooks/useMuseums";
 import { useMuseumGuides } from "../hooks/useGuides";
 import { useMuseumReviews, useCreateReview } from "../hooks/useReviews";
-import { useAIChat } from "../hooks/useAI";
 import { aiService } from "../services/ai";
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -34,7 +33,6 @@ export default function MuseumDetail() {
   const favoriteIds = useFavoriteMuseumIds();
   const toggleFav = useToggleFavorite();
   const createReview = useCreateReview(id || "");
-  const aiChat = useAIChat();
 
   const isFav = favoriteIds.has(id || "");
 
@@ -72,7 +70,7 @@ export default function MuseumDetail() {
     return (
       <div className="min-h-screen bg-[#F8F5F0] pt-20 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">🏛️</div>
+          <Landmark className="w-16 h-16 text-[#EDD9BC] mx-auto mb-4" />
           <h2 className="font-display text-2xl text-[#4E342E] font-bold mb-3">Museum not found</h2>
           <p className="text-[#8B857C] mb-6">The museum you're looking for doesn't exist in our directory.</p>
           <Link to="/museums" className="bg-[#4E342E] text-[#F8F5F0] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#A65E2E] transition-colors">
@@ -170,7 +168,7 @@ export default function MuseumDetail() {
         <div className="flex gap-2 px-4 sm:px-8 mt-2">
           {museum.gallery.map((img, i) => (
             <div key={i} className="h-20 w-32 rounded-xl overflow-hidden bg-[#EDD9BC] flex-shrink-0">
-              <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" />
+              <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
             </div>
           ))}
         </div>
@@ -280,9 +278,12 @@ export default function MuseumDetail() {
                     <p className="font-medium text-[#4E342E] text-sm mb-3">Write a Review</p>
                     <div className="flex gap-1 mb-3">
                       {[1, 2, 3, 4, 5].map((s) => (
-                        <button key={s} onClick={() => setReviewRating(s)}>
-                          <Star className={`w-5 h-5 ${s <= reviewRating ? "text-[#D8B892] fill-[#D8B892]" : "text-[#EDD9BC]"}`} />
-                        </button>
+                    <button key={s} onClick={() => setReviewRating(s)}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setReviewRating(s); } }}
+                      role="radio" aria-checked={s === reviewRating} aria-label={`${s} star${s !== 1 ? "s" : ""}`} tabIndex={0}
+                    >
+                      <Star className={`w-5 h-5 ${s <= reviewRating ? "text-[#D8B892] fill-[#D8B892]" : "text-[#EDD9BC]"}`} />
+                    </button>
                       ))}
                     </div>
                     <textarea
@@ -384,7 +385,7 @@ export default function MuseumDetail() {
                   {related.map((m) => (
                     <Link key={m.id} to={`/museums/${m.id}`} className="flex gap-3 group">
                       <div className="w-14 h-14 rounded-xl overflow-hidden bg-[#EDD9BC] flex-shrink-0">
-                        <img src={m.coverImage} alt={m.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                        <img src={m.coverImage} alt={m.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" loading="lazy" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-[#4E342E] text-xs leading-tight line-clamp-2 group-hover:text-[#A65E2E] transition-colors">{m.title}</p>
@@ -479,7 +480,7 @@ export default function MuseumDetail() {
                 />
                 <button
                   onClick={sendMessage}
-                  disabled={!input.trim() || aiChat.isPending}
+                  disabled={!input.trim() || streaming}
                   className="bg-[#4E342E] text-[#F8F5F0] w-10 h-10 rounded-2xl flex items-center justify-center hover:bg-[#A65E2E] transition-colors disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />

@@ -3,7 +3,7 @@ import { Link, useLocation, Routes, Route } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, BookOpen, PlusCircle, Heart, User, Menu, X,
-  Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2, Star
+  Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2, Star, PartyPopper
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useMyGuides, useCreateGuide, useDeleteGuide, useAIGuideGenerate } from "../hooks/useGuides";
@@ -300,7 +300,7 @@ function AddGuide() {
   if (createGuide.isSuccess) {
     return (
       <div className="text-center py-16">
-        <div className="text-5xl mb-4">🎉</div>
+        <PartyPopper className="w-14 h-14 text-[#D8B892] mx-auto mb-4" />
         <h2 className="font-display text-2xl text-[#4E342E] font-bold mb-2">Guide Published!</h2>
         <p className="text-[#8B857C] mb-6">Your museum guide is now live for the community to discover.</p>
         <div className="flex justify-center gap-3">

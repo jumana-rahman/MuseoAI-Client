@@ -1,1 +1,56 @@
 /// <reference types="vite/client" />
+
+declare module "lucide-react" {
+  import type { ComponentType, SVGProps } from "react";
+  type IconProps = SVGProps<SVGSVGElement> & { size?: number | string };
+  type Icon = ComponentType<IconProps>;
+  export const AlertTriangle: Icon;
+  export const ArrowLeft: Icon;
+  export const ArrowRight: Icon;
+  export const Award: Icon;
+  export const BookOpen: Icon;
+  export const ChevronDown: Icon;
+  export const ChevronLeft: Icon;
+  export const ChevronRight: Icon;
+  export const Clock: Icon;
+  export const Eye: Icon;
+  export const EyeOff: Icon;
+  export const FileText: Icon;
+  export const FlaskConical: Icon;
+  export const Globe: Icon;
+  export const Heart: Icon;
+  export const Landmark: Icon;
+  export const LayoutDashboard: Icon;
+  export const Leaf: Icon;
+  export const Lightbulb: Icon;
+  export const Loader2: Icon;
+  export const LogOut: Icon;
+  export const Mail: Icon;
+  export const MailOpen: Icon;
+  export const Map: Icon;
+  export const MapPin: Icon;
+  export const Menu: Icon;
+  export const MessageCircle: Icon;
+  export const MessageSquare: Icon;
+  export const Minus: Icon;
+  export const PartyPopper: Icon;
+  export const Palette: Icon;
+  export const Plus: Icon;
+  export const PlusCircle: Icon;
+  export const RefreshCw: Icon;
+  export const Search: Icon;
+  export const Send: Icon;
+  export const Shield: Icon;
+  export const SlidersHorizontal: Icon;
+  export const Smile: Icon;
+  export const Sparkles: Icon;
+  export const Star: Icon;
+  export const Swords: Icon;
+  export const ThumbsDown: Icon;
+  export const ThumbsUp: Icon;
+  export const Ticket: Icon;
+  export const Trash2: Icon;
+  export const User: Icon;
+  export const Users: Icon;
+  export const X: Icon;
+}

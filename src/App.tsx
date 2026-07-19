@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Providers from "./providers/Providers";
@@ -15,6 +16,16 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Recommendations from "./pages/Recommendations";
 import GuideDetail from "./pages/GuideDetail";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -37,6 +48,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -47,6 +59,8 @@ function AppRoutes() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
           <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
           <Route path="/items/add" element={<ProtectedRoute><Navigate to="/dashboard/add-guide" replace /></ProtectedRoute>} />

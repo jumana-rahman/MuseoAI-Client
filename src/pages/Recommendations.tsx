@@ -140,7 +140,7 @@ export default function Recommendations() {
               <div key={museum.id} className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-5 flex gap-4">
                 <div className="flex-shrink-0 text-2xl font-display font-bold text-[#EDD9BC] w-8">{i + 1}</div>
                 <div className="w-24 h-24 rounded-xl overflow-hidden bg-[#EDD9BC] flex-shrink-0">
-                  <img src={museum.coverImage} alt={museum.title} className="w-full h-full object-cover" />
+                  <img src={museum.coverImage} alt={museum.title} className="w-full h-full object-cover" loading="lazy" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">

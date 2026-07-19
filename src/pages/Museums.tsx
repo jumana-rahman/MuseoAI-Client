@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight, Landmark } from "lucide-react";
 import MuseumCard from "../components/MuseumCard";
 import { useMuseums } from "../hooks/useMuseums";
 import { motion } from "framer-motion";
@@ -174,7 +174,7 @@ export default function Museums() {
           </div>
         ) : museums.length === 0 ? (
           <div className="text-center py-24">
-            <div className="text-6xl mb-4">&#x1F3DB;&#xFE0F;</div>
+            <Landmark className="w-16 h-16 text-[#EDD9BC] mx-auto mb-4" />
             <h3 className="font-display text-[#4E342E] text-xl font-semibold mb-2">No museums found</h3>
             <p className="text-[#8B857C] mb-6">Try adjusting your search or filters</p>
             <button onClick={clearFilters} className="bg-[#4E342E] text-[#F8F5F0] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#A65E2E] transition-colors">

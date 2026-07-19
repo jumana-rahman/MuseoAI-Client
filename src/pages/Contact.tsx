@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, MapPin, Clock, MessageSquare, Send } from "lucide-react";
+import { Mail, MapPin, Clock, MessageSquare, Send, MailOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "../lib/api";
@@ -61,7 +61,7 @@ export default function Contact() {
           <div className="lg:col-span-2">
             {sent ? (
               <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-10 text-center">
-                <div className="text-5xl mb-4">&#x1F4EC;</div>
+                <MailOpen className="w-14 h-14 text-[#D8B892] mx-auto mb-4" />
                 <h3 className="font-display text-[#4E342E] text-2xl font-bold mb-2">Message Sent!</h3>
                 <p className="text-[#5D4037] mb-6">Thank you for reaching out. We'll get back to you within 24 hours.</p>
                 <button

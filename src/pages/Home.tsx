@@ -7,12 +7,20 @@ import {
 } from "recharts";
 import {
   ChevronDown, Sparkles, MessageCircle, Map, Heart, Star, ArrowRight,
-  ChevronLeft, ChevronRight, Plus, Minus
+  ChevronLeft, ChevronRight, Plus, Minus,
+  Palette, Landmark, FlaskConical, Swords, Lightbulb, Smile, Leaf
 } from "lucide-react";
 import { apiRequest } from "../lib/api";
-const CATEGORIES_WITH_ICONS: Record<string, string> = {
-  Art: "\uD83C\uDFA8", History: "\uD83C\uDFDB\uFE0F", Archaeology: "\u26B1\uFE0F", Science: "\uD83D\uDD2C",
-  Military: "\u2694\uFE0F", Technology: "\uD83D\uDCA1", "Children's Museum": "\uD83C\uDFAA", "Natural History": "\uD83E\uDD95",
+
+const CATEGORIES_WITH_ICONS: Record<string, React.ReactNode> = {
+  Art: <Palette className="w-10 h-10" />,
+  History: <Landmark className="w-10 h-10" />,
+  Archaeology: <Landmark className="w-10 h-10" />,
+  Science: <FlaskConical className="w-10 h-10" />,
+  Military: <Swords className="w-10 h-10" />,
+  Technology: <Lightbulb className="w-10 h-10" />,
+  "Children's Museum": <Smile className="w-10 h-10" />,
+  "Natural History": <Leaf className="w-10 h-10" />,
 };
 
 const TESTIMONIALS = [
@@ -231,7 +239,7 @@ export default function Home() {
                 to={`/museums?category=${cat.category}`}
                 className="group bg-[#3A2420] border border-[#6D4C41] rounded-2xl p-6 text-center hover:bg-[#A65E2E] hover:border-[#A65E2E] transition-all duration-300"
               >
-                <div className="text-4xl mb-3">{CATEGORIES_WITH_ICONS[cat.category] || "\uD83C\uDFDB\uFE0F"}</div>
+                <div className="text-[#D8B892] mb-3 group-hover:text-white transition-colors">{CATEGORIES_WITH_ICONS[cat.category] || <Landmark className="w-10 h-10" />}</div>
                 <p className="font-display text-[#F8F5F0] font-semibold text-sm">{cat.category}</p>
                 <p className="text-[#8B857C] text-xs mt-1 group-hover:text-[#EDD9BC]">{cat.count} museums</p>
               </Link>
@@ -311,7 +319,7 @@ export default function Home() {
                   to={`/museums?country=${c.name}`}
                   className="group relative rounded-2xl overflow-hidden shadow-warm aspect-square"
                 >
-                  <img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#3A2420]/80 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-3 text-center">
                     <p className="font-display text-white font-semibold text-sm">{c.name}</p>
@@ -405,7 +413,7 @@ export default function Home() {
             {latestGuides.slice(0, 6).map((guide) => (
               <Link key={guide.id} to={`/guides/${guide.id}`} className="block bg-[#3A2420] rounded-2xl overflow-hidden border border-[#6D4C41] hover:border-[#D8B892] transition-colors">
                 <div className="relative h-40 bg-[#6D4C41]">
-                  <img src={guide.coverImage} alt={guide.title} className="w-full h-full object-cover opacity-80" />
+                  <img src={guide.coverImage} alt={guide.title} className="w-full h-full object-cover opacity-80" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#3A2420]/60 to-transparent" />
                   <div className="absolute top-3 left-3">
                     <span className="bg-[#D8B892] text-[#4E342E] text-xs font-semibold px-2 py-0.5 rounded-full">{guide.targetAudience}</span>

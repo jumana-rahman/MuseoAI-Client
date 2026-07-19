@@ -33,8 +33,8 @@ export default function Favorites() {
           <img src="https://images.unsplash.com/photo-1578926375605-eaf7559b1458?q=80&w=1063&auto=format" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative">
-          <h1 className="font-display text-4xl sm:text-5xl text-[#F8F5F0] font-bold mb-2">My Favorites</h1>
-          <p className="text-[#D8B892] text-sm mb-1">Your personal collection of museums you love</p>
+          <h1 className="font-display text-4xl sm:text-5xl text-[#F8F5F0] font-bold mb-3">My Favorites</h1>
+          <p className="text-[#D8B892] text-sm mb-2">Your personal collection of museums you love</p>
           <p className="text-[#8B857C]">{favoriteMuseums.length} saved museum{favoriteMuseums.length !== 1 ? "s" : ""}</p>
         </div>
       </div>

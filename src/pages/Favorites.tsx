@@ -34,6 +34,7 @@ export default function Favorites() {
         </div>
         <div className="relative">
           <h1 className="font-display text-4xl sm:text-5xl text-[#F8F5F0] font-bold mb-2">My Favorites</h1>
+          <p className="text-[#D8B892] text-sm mb-1">Your personal collection of museums you love</p>
           <p className="text-[#8B857C]">{favoriteMuseums.length} saved museum{favoriteMuseums.length !== 1 ? "s" : ""}</p>
         </div>
       </div>

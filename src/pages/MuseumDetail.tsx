@@ -139,7 +139,6 @@ export default function MuseumDetail() {
       onError: (err?: Error) => {
         setStreaming(false);
         const msg = err?.message || "Sorry, the AI service is temporarily unavailable. Please try again.";
-        toast.error(msg);
         setMessages((prev) => {
           const updated = [...prev];
           updated[updated.length - 1] = { role: "assistant", content: msg };

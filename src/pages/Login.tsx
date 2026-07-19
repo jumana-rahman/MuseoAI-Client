@@ -32,7 +32,6 @@ export default function Login() {
 
   const handleGoogle = () => {
     loginGoogle();
-    navigate(from, { replace: true });
   };
 
   return (

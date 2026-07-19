@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, Routes, Route } from "react-router-dom";
+import { Link, useLocation, Routes, Route, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, BookOpen, PlusCircle, Heart, User, Menu, X,
@@ -246,8 +246,10 @@ function RecentActivity() {
 
 function AddGuide() {
   useAuth();
+  const [searchParams] = useSearchParams();
+  const initialMuseumId = searchParams.get("museumId") || "";
   const [form, setForm] = useState({
-    title: "", museumId: "", targetAudience: "", visitDuration: "", shortDescription: "", guideContent: "", coverImage: "",
+    title: "", museumId: initialMuseumId, targetAudience: "", visitDuration: "", shortDescription: "", guideContent: "", coverImage: "",
   });
   const [aiMode, setAiMode] = useState(false);
   const [interests, setInterests] = useState<string[]>([]);

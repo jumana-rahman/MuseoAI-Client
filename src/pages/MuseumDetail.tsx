@@ -46,30 +46,37 @@ export default function MuseumDetail() {
   const [reviewRating, setReviewRating] = useState(5);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (museum && messages.length === 0) {
-      setMessages([
-        { role: "assistant", content: `Welcome! I'm your AI guide for ${museum.title}. Ask me anything about the museum — opening hours, highlights, visitor tips, or what to see first.` },
-      ]);
-    }
-  }, [museum]);
+  const getWelcomeMessage = () => museum
+    ? `Welcome! I'm your AI guide for ${museum.title}. Ask me anything about the museum — opening hours, highlights, visitor tips, or what to see first.`
+    : "";
 
   const loadConversation = async () => {
-    if (!user || !museum) return;
+    if (!museum) return;
+    if (!user) {
+      setMessages([{ role: "assistant", content: getWelcomeMessage() }]);
+      return;
+    }
     try {
       const data = await aiService.getConversation(museum.id);
       if (data.messages && data.messages.length > 0) {
         setMessages(data.messages);
         if (data.conversationId) setConversationId(data.conversationId);
+        return;
       }
     } catch {
-      // No existing conversation — keep welcome message
+      // ignore
     }
+    setMessages([{ role: "assistant", content: getWelcomeMessage() }]);
   };
 
   const openChat = () => {
     setChatOpen(true);
     loadConversation();
+  };
+
+  const resetChat = () => {
+    setMessages([{ role: "assistant", content: getWelcomeMessage() }]);
+    setConversationId(undefined);
   };
 
   useEffect(() => {
@@ -439,7 +446,7 @@ export default function MuseumDetail() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={() => { setMessages([]); setConversationId(undefined); }} className="text-[#8B857C] hover:text-[#D8B892]">
+                <button onClick={resetChat} className="text-[#8B857C] hover:text-[#D8B892]">
                   <RefreshCw className="w-4 h-4" />
                 </button>
                 <button onClick={() => setChatOpen(false)} className="text-[#8B857C] hover:text-[#D8B892]">

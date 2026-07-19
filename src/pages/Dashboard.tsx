@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, Routes, Route, useSearchParams } from "react-router-dom";
+import { Link, useLocation, Routes, Route, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, BookOpen, PlusCircle, Heart, User, Menu, X,
-  Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2, Star, PartyPopper
+  Trash2, Eye, Sparkles, ChevronRight, MapPin, RefreshCw, Loader2, Star, PartyPopper, Home, LogOut, Landmark
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { useMyGuides, useCreateGuide, useDeleteGuide, useAIGuideGenerate } from "../hooks/useGuides";
@@ -18,8 +18,9 @@ const AUDIENCES = ["Families", "Students", "Tourists", "Researchers", "Art Lover
 const INTERESTS = ["Paintings", "Sculptures", "Ancient History", "Modern Art", "Architecture", "Science", "Culture", "War History"];
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!user) {
@@ -34,77 +35,99 @@ export default function Dashboard() {
     { path: "/dashboard/profile", label: "Profile", icon: <User className="w-4 h-4" /> },
   ];
 
-  return (
-    <div className="min-h-screen bg-[#F8F5F0] pt-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex gap-8">
-          {/* Sidebar */}
-          <aside className="hidden lg:block w-56 flex-shrink-0">
-            <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-4 sticky top-24">
-              <div className="flex items-center gap-3 p-3 mb-4 border-b border-[#EDD9BC]">
-                <img src={user.photo} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
-                <div className="min-w-0">
-                  <p className="font-semibold text-[#4E342E] text-sm truncate">{user.name}</p>
-                  <p className="text-[#8B857C] text-xs truncate">{user.email}</p>
-                </div>
-              </div>
-              <nav className="space-y-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.path}
-                    to={item.path}
-                    className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === item.path ? "bg-[#4E342E] text-[#F8F5F0]" : "text-[#5D4037] hover:bg-[#EDD9BC]"}`}
-                  >
-                    {item.icon} {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
-          </aside>
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
-          {/* Mobile sidebar toggle */}
-          <div className="lg:hidden fixed bottom-6 left-4 z-40">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="bg-[#4E342E] text-[#F8F5F0] w-12 h-12 rounded-full flex items-center justify-center shadow-warm-lg"
-            >
-              {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full">
+      <div className="p-4 border-b border-[#EDD9BC]">
+        <Link to="/" className="flex items-center gap-2 mb-4">
+          <div className="w-8 h-8 bg-[#D8B892] rounded-lg flex items-center justify-center">
+            <Landmark className="w-4 h-4 text-[#4E342E]" />
           </div>
-
-          {sidebarOpen && (
-            <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setSidebarOpen(false)}>
-              <div className="bg-white w-64 h-full p-4 shadow-warm-lg" onClick={(e) => e.stopPropagation()}>
-                <nav className="space-y-1 mt-16">
-                  {navItems.map((item) => (
-                    <Link key={item.path} to={item.path} onClick={() => setSidebarOpen(false)}
-                      className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === item.path ? "bg-[#4E342E] text-[#F8F5F0]" : "text-[#5D4037] hover:bg-[#EDD9BC]"}`}
-                    >
-                      {item.icon} {item.label}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-            </div>
-          )}
-
-          {/* Main */}
-          <motion.main
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.6 }}
-            className="flex-1 min-w-0"
-          >
-            <Routes>
-              <Route index element={<Overview />} />
-              <Route path="add-guide" element={<AddGuide />} />
-              <Route path="my-guides" element={<MyGuides />} />
-              <Route path="profile" element={<ProfileSettings />} />
-            </Routes>
-          </motion.main>
+          <span className="font-display text-lg font-bold text-[#4E342E]">MuseoAI</span>
+        </Link>
+        <div className="flex items-center gap-3 p-3 bg-[#F8F5F0] rounded-xl">
+          <img src={user.photo} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
+          <div className="min-w-0">
+            <p className="font-semibold text-[#4E342E] text-sm truncate">{user.name}</p>
+            <p className="text-[#8B857C] text-xs truncate">{user.email}</p>
+          </div>
         </div>
       </div>
+
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-[#5D4037] hover:bg-[#EDD9BC] transition-colors"
+        >
+          <Home className="w-4 h-4" /> Home
+        </Link>
+        {navItems.map((item) => (
+          <Link
+            key={item.path}
+            to={item.path}
+            onClick={() => setSidebarOpen(false)}
+            className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${location.pathname === item.path ? "bg-[#4E342E] text-[#F8F5F0]" : "text-[#5D4037] hover:bg-[#EDD9BC]"}`}
+          >
+            {item.icon} {item.label}
+          </Link>
+        ))}
+      </nav>
+
+      <div className="p-3 border-t border-[#EDD9BC]">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full"
+        >
+          <LogOut className="w-4 h-4" /> Logout
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#F8F5F0] flex">
+      {/* Desktop sidebar */}
+      <aside className="hidden lg:block w-60 flex-shrink-0 bg-white border-r border-[#EDD9BC] h-screen sticky top-0">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile sidebar toggle */}
+      <div className="lg:hidden fixed bottom-6 left-4 z-40">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="bg-[#4E342E] text-[#F8F5F0] w-12 h-12 rounded-full flex items-center justify-center shadow-warm-lg"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
+      </div>
+
+      {sidebarOpen && (
+        <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setSidebarOpen(false)}>
+          <div className="bg-white w-64 h-full shadow-warm-lg" onClick={(e) => e.stopPropagation()}>
+            <SidebarContent />
+          </div>
+        </div>
+      )}
+
+      {/* Main */}
+      <motion.main
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-50px" }}
+        transition={{ duration: 0.6 }}
+        className="flex-1 min-w-0 p-6 lg:p-8"
+      >
+        <Routes>
+          <Route index element={<Overview />} />
+          <Route path="add-guide" element={<AddGuide />} />
+          <Route path="my-guides" element={<MyGuides />} />
+          <Route path="profile" element={<ProfileSettings />} />
+        </Routes>
+      </motion.main>
     </div>
   );
 }

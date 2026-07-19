@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, Outlet } from "react-router-dom";
 import { Toaster } from "sonner";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import Providers from "./providers/Providers";
@@ -36,11 +36,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function Layout({ children }: { children: React.ReactNode }) {
+function Layout() {
   return (
     <>
       <Navbar />
-      <main>{children}</main>
+      <main><Outlet /></main>
       <Footer />
     </>
   );
@@ -50,8 +50,8 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <Layout>
-        <Routes>
+      <Routes>
+        <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/museums" element={<Museums />} />
           <Route path="/museums/:id" element={<ErrorBoundary><MuseumDetail /></ErrorBoundary>} />
@@ -67,10 +67,10 @@ function AppRoutes() {
           <Route path="/items/add" element={<ProtectedRoute><Navigate to="/dashboard/add-guide" replace /></ProtectedRoute>} />
           <Route path="/items/manage" element={<ProtectedRoute><Navigate to="/dashboard/my-guides" replace /></ProtectedRoute>} />
           <Route path="/dashboard/manage-guides" element={<ProtectedRoute><Navigate to="/dashboard/my-guides" replace /></ProtectedRoute>} />
-          <Route path="/dashboard/*" element={<ProtectedRoute><ErrorBoundary><Dashboard /></ErrorBoundary></ProtectedRoute>} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
+        </Route>
+        <Route path="/dashboard/*" element={<ProtectedRoute><ErrorBoundary><Dashboard /></ErrorBoundary></ProtectedRoute>} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </BrowserRouter>
   );
 }

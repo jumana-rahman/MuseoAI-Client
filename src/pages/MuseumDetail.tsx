@@ -281,7 +281,11 @@ export default function MuseumDetail() {
                   <div className="bg-white rounded-2xl p-8 text-center border border-[#EDD9BC] shadow-warm">
                     <BookOpen className="w-8 h-8 text-[#D8B892] mx-auto mb-3" />
                     <p className="text-[#8B857C]">No community guides yet for this museum.</p>
-                    {user && <Link to="/items/add" className="text-[#A65E2E] text-sm font-medium mt-2 inline-block">Be the first to write one →</Link>}
+                    {user ? (
+                      <Link to="/items/add" className="text-[#A65E2E] text-sm font-medium mt-2 inline-block">Be the first to write one →</Link>
+                    ) : (
+                      <button onClick={() => navigate("/login", { state: { from: `/museums/${museum.id}` } })} className="text-[#A65E2E] text-sm font-medium mt-2 inline-block hover:underline">Sign in to write a guide →</button>
+                    )}
                   </div>
                 ) : (
                   guides.map((g) => (

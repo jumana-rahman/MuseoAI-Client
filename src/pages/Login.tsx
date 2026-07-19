@@ -143,7 +143,7 @@ export default function Login() {
 
           <p className="text-center text-[#8B857C] text-sm mt-6">
             Don't have an account?{" "}
-            <Link to="/register" className="text-[#A65E2E] font-medium hover:underline">Register</Link>
+            <Link to="/register" state={{ from }} className="text-[#A65E2E] font-medium hover:underline">Register</Link>
           </p>
         </motion.div>
       </div>

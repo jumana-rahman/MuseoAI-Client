@@ -43,7 +43,7 @@ const POPULAR_COUNTRIES = [
   { name: "Egypt", image: "https://images.unsplash.com/photo-1539768942893-daf53e448371?w=600&h=400&fit=crop&auto=format" },
   { name: "Japan", image: "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&h=400&fit=crop&auto=format" },
   { name: "USA", image: "https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=600&h=400&fit=crop&auto=format" },
-  { name: "Bangladesh", image: "https://images.unsplash.com/photo-1580130544977-1b4aa7e98aed?w=600&h=400&fit=crop&auto=format" },
+  { name: "Bangladesh", image: "https://images.unsplash.com/photo-1673051787560-13622b325a9a?q=80&w=1170&auto=format" },
 ];
 import MuseumCard from "../components/MuseumCard";
 import { useAuth } from "../context/AuthContext";

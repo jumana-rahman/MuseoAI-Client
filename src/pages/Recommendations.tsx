@@ -73,7 +73,7 @@ export default function Recommendations() {
     <div className="min-h-screen bg-[#F8F5F0] pt-20">
       <div className="relative bg-[#4E342E] py-14 px-4 text-center overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1600&h=600&fit=crop&auto=format" alt="" className="w-full h-full object-cover" />
+          <img src="https://images.unsplash.com/photo-1605429523419-d828acb941d9?q=80&w=1332&auto=format" alt="" className="w-full h-full object-cover" />
         </div>
         <div className="relative">
           <div className="inline-flex items-center gap-2 bg-[#D8B892]/20 border border-[#D8B892]/30 text-[#D8B892] text-sm px-3 py-1.5 rounded-full mb-4">

@@ -85,8 +85,61 @@ export default function MuseumDetail() {
 
   if (museumLoading) {
     return (
-      <div className="min-h-screen bg-[#F8F5F0] pt-20 flex items-center justify-center">
-        <div className="animate-pulse text-[#8B857C]">Loading museum...</div>
+      <div className="min-h-screen bg-[#F8F5F0] pt-16">
+        <div className="relative h-80 sm:h-96 bg-[#3A2420] animate-pulse">
+          <div className="absolute bottom-6 left-4 sm:left-8 right-4 sm:right-8 space-y-3">
+            <div className="flex gap-2">
+              <div className="h-5 w-20 bg-white/20 rounded-full" />
+              <div className="h-5 w-16 bg-white/20 rounded-full" />
+            </div>
+            <div className="h-10 w-72 bg-white/20 rounded-xl" />
+            <div className="h-4 w-48 bg-white/20 rounded-lg" />
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="flex gap-1 bg-white rounded-2xl p-1 border border-[#EDD9BC] shadow-warm">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-9 flex-1 bg-[#EDD9BC] rounded-xl animate-pulse" />
+                ))}
+              </div>
+              <div className="bg-white rounded-2xl p-6 shadow-warm border border-[#EDD9BC] space-y-4">
+                <div className="h-5 w-24 bg-[#EDD9BC] rounded-lg animate-pulse" />
+                <div className="space-y-2">
+                  <div className="h-3.5 w-full bg-[#EDD9BC] rounded animate-pulse" />
+                  <div className="h-3.5 w-full bg-[#EDD9BC] rounded animate-pulse" />
+                  <div className="h-3.5 w-3/4 bg-[#EDD9BC] rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="bg-white rounded-2xl p-4 border border-[#EDD9BC] shadow-warm animate-pulse">
+                    <div className="h-3 w-20 bg-[#EDD9BC] rounded mb-2" />
+                    <div className="h-4 w-32 bg-[#EDD9BC] rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-5">
+              <div className="bg-[#4E342E] rounded-2xl p-5 animate-pulse">
+                <div className="h-5 w-36 bg-white/20 rounded-lg mb-3" />
+                <div className="h-3 w-full bg-white/20 rounded mb-2" />
+                <div className="h-3 w-3/4 bg-white/20 rounded mb-4" />
+                <div className="h-10 w-full bg-[#D8B892]/30 rounded-xl" />
+              </div>
+              <div className="bg-white rounded-2xl p-5 border border-[#EDD9BC] shadow-warm space-y-3 animate-pulse">
+                <div className="h-5 w-24 bg-[#EDD9BC] rounded" />
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex justify-between">
+                    <div className="h-3.5 w-16 bg-[#EDD9BC] rounded" />
+                    <div className="h-3.5 w-24 bg-[#EDD9BC] rounded" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

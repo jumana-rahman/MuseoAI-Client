@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const loginGoogle = async () => {
-    const clientUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace("/api", "");
+    const clientUrl = window.location.origin;
     await authClient.signIn.social({
       provider: "google",
       callbackURL: `${clientUrl}/dashboard`,

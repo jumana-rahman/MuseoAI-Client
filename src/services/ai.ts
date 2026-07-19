@@ -73,30 +73,48 @@ export const aiService = {
     }
   },
 
-  getConversation: (museumId: string) =>
-    fetch(`${API_URL}/ai/conversations/${museumId}`, {
+  getConversation: async (museumId: string) => {
+    const res = await fetch(`${API_URL}/ai/conversations/${museumId}`, {
       credentials: "include",
-    }).then((r) => r.json()),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "Failed to load conversation");
+    }
+    return res.json();
+  },
 
-  recommendations: (data: {
+  recommendations: async (data: {
     interests?: string[];
     preferredCountry?: string;
     budget?: number;
     travelDuration?: string;
     travelType?: string;
-  }) =>
-    fetch(`${API_URL}/ai/recommendations`, {
+  }) => {
+    const res = await fetch(`${API_URL}/ai/recommendations`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify(data),
-    }).then((r) => r.json()),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || "Recommendation service unavailable");
+    }
+    return res.json();
+  },
 
-  recordSignal: (museumId: string, signalType: string) =>
-    fetch(`${API_URL}/ai/signals`, {
+  recordSignal: async (museumId: string, signalType: string) => {
+    const res = await fetch(`${API_URL}/ai/signals`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
       body: JSON.stringify({ museumId, signalType }),
-    }).then((r) => r.json()),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || "Failed to record signal");
+    }
+    return res.json();
+  },
 };

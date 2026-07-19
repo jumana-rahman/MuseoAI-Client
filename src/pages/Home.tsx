@@ -229,8 +229,8 @@ export default function Home() {
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
         >
           <div className="text-center mb-12">
-            <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-2">Browse by Type</p>
-            <h2 className="font-display text-3xl sm:text-4xl text-[#F8F5F0] font-bold">Explore by Category</h2>
+            <p className="text-[#D8B892] text-sm font-semibold uppercase tracking-widest mb-2">Every museum tells a different story.</p>
+            <h2 className="font-display text-3xl sm:text-4xl text-[#F8F5F0] font-bold">Explore What Fascinates You</h2>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {statsByCategory.map((cat: { category: string; count: number }) => (
@@ -239,7 +239,7 @@ export default function Home() {
                 to={`/museums?category=${cat.category}`}
                 className="group bg-[#3A2420] border border-[#6D4C41] rounded-2xl p-6 text-center hover:bg-[#A65E2E] hover:border-[#A65E2E] transition-all duration-300"
               >
-                <div className="text-[#D8B892] mb-3 group-hover:text-white transition-colors">{CATEGORIES_WITH_ICONS[cat.category] || <Landmark className="w-10 h-10" />}</div>
+                <div className="flex justify-center text-[#D8B892] mb-3 group-hover:text-white transition-colors">{CATEGORIES_WITH_ICONS[cat.category] || <Landmark className="w-10 h-10" />}</div>
                 <p className="font-display text-[#F8F5F0] font-semibold text-sm">{cat.category}</p>
                 <p className="text-[#8B857C] text-xs mt-1 group-hover:text-[#EDD9BC]">{cat.count} museums</p>
               </Link>

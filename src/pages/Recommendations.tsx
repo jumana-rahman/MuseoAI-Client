@@ -129,7 +129,15 @@ export default function Recommendations() {
 
         {getRecommendations.isError && (
           <div className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-8 text-red-700 text-sm">
-            Failed to get recommendations. Please try again.
+            {(getRecommendations.error as Error)?.message || "Failed to get recommendations. Please try again."}
+          </div>
+        )}
+
+        {getRecommendations.isSuccess && results.length === 0 && (
+          <div className="bg-white rounded-2xl border border-[#EDD9BC] shadow-warm p-8 text-center mb-8">
+            <Sparkles className="w-10 h-10 text-[#EDD9BC] mx-auto mb-3" />
+            <h3 className="font-display text-[#4E342E] font-semibold mb-1">No matches found</h3>
+            <p className="text-[#8B857C] text-sm">Try adjusting your interests, budget, or country to find more museums.</p>
           </div>
         )}
 

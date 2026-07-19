@@ -54,6 +54,24 @@ export default function MuseumDetail() {
     }
   }, [museum]);
 
+  const loadConversation = async () => {
+    if (!user || !museum) return;
+    try {
+      const data = await aiService.getConversation(museum.id);
+      if (data.messages && data.messages.length > 0) {
+        setMessages(data.messages);
+        if (data.conversationId) setConversationId(data.conversationId);
+      }
+    } catch {
+      // No existing conversation — keep welcome message
+    }
+  };
+
+  const openChat = () => {
+    setChatOpen(true);
+    loadConversation();
+  };
+
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -102,6 +120,9 @@ export default function MuseumDetail() {
           updated[updated.length - 1] = { role: "assistant", content: fullReply };
           return updated;
         });
+      },
+      onConversationId: (id) => {
+        if (id) setConversationId(id);
       },
       onDone: () => setStreaming(false),
       onError: () => {
@@ -342,7 +363,7 @@ export default function MuseumDetail() {
               </div>
               <p className="text-[#8B857C] text-sm mb-4">Chat with an AI that knows this museum inside out — history, exhibits, tips, and more.</p>
               <button
-                onClick={() => setChatOpen(true)}
+                onClick={openChat}
                 className="w-full bg-[#D8B892] text-[#4E342E] font-semibold py-2.5 rounded-xl hover:bg-[#c9a67d] transition-colors flex items-center justify-center gap-2 text-sm"
               >
                 <MessageCircle className="w-4 h-4" /> Start Conversation

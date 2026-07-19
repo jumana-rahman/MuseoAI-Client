@@ -17,10 +17,11 @@ export const aiService = {
     message: string;
     conversationId?: string;
     onChunk: (text: string) => void;
+    onConversationId: (id: string | null) => void;
     onDone: () => void;
     onError: (err: Error) => void;
   }) => {
-    const { museumId, message, conversationId, onChunk, onDone, onError } = data;
+    const { museumId, message, conversationId, onChunk, onConversationId, onDone, onError } = data;
     try {
       const res = await fetch(`${API_URL}/ai/museum-guide`, {
         method: "POST",
@@ -58,6 +59,7 @@ export const aiService = {
             try {
               const parsed = JSON.parse(payload);
               if (parsed.text) onChunk(parsed.text);
+              if (parsed.conversationId !== undefined) onConversationId(parsed.conversationId);
               if (parsed.error) throw new Error(parsed.error);
             } catch {
               // skip malformed chunks
@@ -70,6 +72,11 @@ export const aiService = {
       onError(err instanceof Error ? err : new Error("Unknown error"));
     }
   },
+
+  getConversation: (museumId: string) =>
+    fetch(`${API_URL}/ai/conversations/${museumId}`, {
+      credentials: "include",
+    }).then((r) => r.json()),
 
   recommendations: (data: {
     interests?: string[];

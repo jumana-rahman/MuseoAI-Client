@@ -63,7 +63,7 @@ export default function Navbar() {
             <NavLink to="/" label="Home" textColor={textColor} />
             <NavLink to="/museums" label="Explore Museums" textColor={textColor} />
             {user && <NavLink to="/favorites" label="Favorites" textColor={textColor} />}
-            {user && <NavLink to="/recommendations" label="AI Picks" textColor={textColor} />}
+            <NavLink to="/recommendations" label="AI Picks" textColor={textColor} />
             {user && <NavLink to="/dashboard" label="Dashboard" textColor={textColor} />}
             <NavLink to="/about" label="About" textColor={textColor} />
             <NavLink to="/contact" label="Contact" textColor={textColor} />
@@ -120,7 +120,7 @@ export default function Navbar() {
           <MobileLink to="/" label="Home" />
           <MobileLink to="/museums" label="Explore Museums" />
           {user && <MobileLink to="/favorites" label="Favorites" icon={<Heart className="w-4 h-4" />} />}
-          {user && <MobileLink to="/recommendations" label="AI Picks" icon={<Sparkles className="w-4 h-4" />} />}
+          <MobileLink to="/recommendations" label="AI Picks" icon={<Sparkles className="w-4 h-4" />} />
           {user && <MobileLink to="/dashboard" label="Dashboard" icon={<LayoutDashboard className="w-4 h-4" />} />}
           <MobileLink to="/about" label="About" />
           <MobileLink to="/contact" label="Contact" />

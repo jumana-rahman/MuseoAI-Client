@@ -70,7 +70,7 @@ export default function Recommendations() {
   }, [getRecommendations.isError, getRecommendations.error]);
 
   return (
-    <div className="min-h-screen bg-[#F8F5F0] pt-20">
+    <div className="min-h-screen bg-[#F8F5F0] pt-16">
       <div className="relative bg-[#4E342E] py-14 px-4 text-center overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img src="https://images.unsplash.com/photo-1605429523419-d828acb941d9?q=80&w=1332&auto=format" alt="" className="w-full h-full object-cover" />

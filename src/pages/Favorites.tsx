@@ -27,7 +27,7 @@ export default function Favorites() {
   const favoriteMuseums = favorites.filter((f) => f.museum).map((f) => f.museum!);
 
   return (
-    <div className="min-h-screen bg-[#F8F5F0] pt-20">
+    <div className="min-h-screen bg-[#F8F5F0] pt-16">
       <div className="relative bg-[#4E342E] py-14 px-4 sm:px-6 lg:px-8 text-center overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img src="https://images.unsplash.com/photo-1578926375605-eaf7559b1458?q=80&w=1063&auto=format" alt="" className="w-full h-full object-cover" />

@@ -70,7 +70,7 @@ export default function Museums() {
   const hasFilters = search || country !== "All" || category !== "All" || ticketType !== "All";
 
   return (
-    <div className="min-h-screen bg-[#F8F5F0] pt-20">
+    <div className="min-h-screen bg-[#F8F5F0] pt-16">
       <div className="relative bg-[#4E342E] py-14 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img src="https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=1600&h=600&fit=crop&auto=format" alt="" className="w-full h-full object-cover" />

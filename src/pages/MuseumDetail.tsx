@@ -273,7 +273,7 @@ export default function MuseumDetail() {
                   <h2 className="font-display text-[#4E342E] text-xl font-semibold">Community Guides</h2>
                   <button
                     onClick={() => {
-                      if (user) navigate(`/items/add?museumId=${museum.id}`);
+                      if (user) navigate(`/dashboard/add-guide?museumId=${museum.id}`);
                       else navigate("/login", { state: { from: `/museums/${museum.id}` } });
                     }}
                     className="bg-[#4E342E] text-[#F8F5F0] text-sm px-4 py-2 rounded-xl hover:bg-[#A65E2E] transition-colors flex items-center gap-1"
@@ -286,7 +286,7 @@ export default function MuseumDetail() {
                     <BookOpen className="w-8 h-8 text-[#D8B892] mx-auto mb-3" />
                     <p className="text-[#8B857C]">No community guides yet for this museum.</p>
                     {user ? (
-                      <Link to={`/items/add?museumId=${museum.id}`} className="text-[#A65E2E] text-sm font-medium mt-2 inline-block">Be the first to write one →</Link>
+                      <Link to={`/dashboard/add-guide?museumId=${museum.id}`} className="text-[#A65E2E] text-sm font-medium mt-2 inline-block">Be the first to write one →</Link>
                     ) : (
                       <button onClick={() => navigate("/login", { state: { from: `/museums/${museum.id}` } })} className="text-[#A65E2E] text-sm font-medium mt-2 inline-block hover:underline">Sign in to write a guide →</button>
                     )}

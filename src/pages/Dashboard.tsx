@@ -10,8 +10,9 @@ import { useMyGuides, useCreateGuide, useDeleteGuide, useAIGuideGenerate } from 
 import type { Guide } from "../services/guides";
 import type { Museum } from "../services/museums";
 import { useMuseums, useFavorites, usePlatformStats } from "../hooks/useMuseums";
+import MuseumCard from "../components/MuseumCard";
 import { apiRequest } from "../lib/api";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 
 const AUDIENCES = ["Families", "Students", "Tourists", "Researchers", "Art Lovers"];
@@ -31,7 +32,7 @@ export default function Dashboard() {
     { path: "/dashboard", label: "Overview", icon: <LayoutDashboard className="w-4 h-4" /> },
     { path: "/dashboard/add-guide", label: "Add Guide", icon: <PlusCircle className="w-4 h-4" /> },
     { path: "/dashboard/my-guides", label: "My Guides", icon: <BookOpen className="w-4 h-4" /> },
-    { path: "/favorites", label: "Favorites", icon: <Heart className="w-4 h-4" /> },
+    { path: "/dashboard/favorites", label: "Favorites", icon: <Heart className="w-4 h-4" /> },
     { path: "/dashboard/profile", label: "Profile", icon: <User className="w-4 h-4" /> },
   ];
 
@@ -101,17 +102,36 @@ export default function Dashboard() {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="bg-[#4E342E] text-[#F8F5F0] w-12 h-12 rounded-full flex items-center justify-center shadow-warm-lg"
         >
-          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <div className="relative w-5 h-5">
+            <Menu className={`w-5 h-5 absolute inset-0 transition-all duration-300 ${sidebarOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"}`} />
+            <X className={`w-5 h-5 absolute inset-0 transition-all duration-300 ${sidebarOpen ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"}`} />
+          </div>
         </button>
       </div>
 
-      {sidebarOpen && (
-        <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setSidebarOpen(false)}>
-          <div className="bg-white w-64 h-full shadow-warm-lg" onClick={(e) => e.stopPropagation()}>
-            <SidebarContent />
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden fixed inset-0 z-30 bg-black/40"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <motion.div
+              initial={{ x: -256 }}
+              animate={{ x: 0 }}
+              exit={{ x: -256 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="bg-white w-64 h-full shadow-warm-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SidebarContent />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main */}
       <motion.main
@@ -125,6 +145,7 @@ export default function Dashboard() {
           <Route index element={<Overview />} />
           <Route path="add-guide" element={<AddGuide />} />
           <Route path="my-guides" element={<MyGuides />} />
+          <Route path="favorites" element={<DashboardFavorites />} />
           <Route path="profile" element={<ProfileSettings />} />
         </Routes>
       </motion.main>
@@ -633,6 +654,43 @@ function ProfileSettings() {
           </button>
         </form>
       </div>
+    </div>
+  );
+}
+
+function DashboardFavorites() {
+  const { data: favorites = [], isLoading } = useFavorites();
+  const favoriteMuseums = favorites.filter((f) => f.museum).map((f) => f.museum!);
+
+  return (
+    <div>
+      <h1 className="font-display text-2xl text-[#4E342E] font-bold mb-6">My Favorites</h1>
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-warm border border-[#EDD9BC] animate-pulse">
+              <div className="h-48 bg-[#EDD9BC]" />
+              <div className="p-4 space-y-3">
+                <div className="h-4 bg-[#EDD9BC] rounded w-3/4" />
+                <div className="h-3 bg-[#EDD9BC] rounded w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : favoriteMuseums.length === 0 ? (
+        <div className="text-center py-20">
+          <Heart className="w-12 h-12 text-[#D8B892] mx-auto mb-4" />
+          <h3 className="font-display text-[#4E342E] text-xl font-semibold mb-2">No favorites yet</h3>
+          <p className="text-[#8B857C] mb-6">Explore our museum directory and save the ones you love.</p>
+          <Link to="/museums" className="bg-[#4E342E] text-[#F8F5F0] px-5 py-2.5 rounded-2xl text-sm font-medium hover:bg-[#A65E2E] transition-colors">
+            Explore Museums
+          </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {favoriteMuseums.map((m) => <MuseumCard key={m.id} museum={m} />)}
+        </div>
+      )}
     </div>
   );
 }

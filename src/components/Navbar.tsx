@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X, Heart, LayoutDashboard, LogOut, User, BookOpen, ChevronDown, Landmark, Sparkles } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
@@ -109,35 +110,48 @@ export default function Navbar() {
 
           {/* Mobile menu toggle */}
           <button className={`md:hidden ${textColor}`} onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            <div className="relative w-6 h-6">
+              <Menu className={`w-6 h-6 absolute inset-0 transition-all duration-300 ${mobileOpen ? "rotate-90 opacity-0" : "rotate-0 opacity-100"}`} />
+              <X className={`w-6 h-6 absolute inset-0 transition-all duration-300 ${mobileOpen ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"}`} />
+            </div>
           </button>
         </div>
       </div>
 
       {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="md:hidden bg-[#4E342E] border-t border-[#6D4C41] px-4 py-4 space-y-1">
-          <MobileLink to="/" label="Home" />
-          <MobileLink to="/museums" label="Explore Museums" />
-          {user && <MobileLink to="/favorites" label="Favorites" icon={<Heart className="w-4 h-4" />} />}
-          <MobileLink to="/recommendations" label="AI Picks" icon={<Sparkles className="w-4 h-4" />} />
-          {user && <MobileLink to="/dashboard" label="Dashboard" icon={<LayoutDashboard className="w-4 h-4" />} />}
-          <MobileLink to="/about" label="About" />
-          <MobileLink to="/contact" label="Contact" />
-          <div className="pt-3 border-t border-[#6D4C41]">
-            {user ? (
-              <button onClick={handleLogout} className="flex items-center gap-2 text-[#D8B892] text-sm py-2">
-                <LogOut className="w-4 h-4" /> Logout
-              </button>
-            ) : (
-              <div className="flex gap-3">
-                <Link to="/login" className="text-[#D8B892] text-sm font-medium py-2">Login</Link>
-                <Link to="/register" className="bg-[#D8B892] text-[#4E342E] px-4 py-2 rounded-2xl text-sm font-semibold">Register</Link>
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="md:hidden overflow-hidden bg-[#4E342E] border-t border-[#6D4C41]"
+          >
+            <div className="px-4 py-4 space-y-1">
+              <MobileLink to="/" label="Home" />
+              <MobileLink to="/museums" label="Explore Museums" />
+              {user && <MobileLink to="/favorites" label="Favorites" icon={<Heart className="w-4 h-4" />} />}
+              <MobileLink to="/recommendations" label="AI Picks" icon={<Sparkles className="w-4 h-4" />} />
+              {user && <MobileLink to="/dashboard" label="Dashboard" icon={<LayoutDashboard className="w-4 h-4" />} />}
+              <MobileLink to="/about" label="About" />
+              <MobileLink to="/contact" label="Contact" />
+              <div className="pt-3 border-t border-[#6D4C41]">
+                {user ? (
+                  <button onClick={handleLogout} className="flex items-center gap-2 text-[#D8B892] text-sm py-2">
+                    <LogOut className="w-4 h-4" /> Logout
+                  </button>
+                ) : (
+                  <div className="flex gap-3">
+                    <Link to="/login" className="text-[#D8B892] text-sm font-medium py-2">Login</Link>
+                    <Link to="/register" className="bg-[#D8B892] text-[#4E342E] px-4 py-2 rounded-2xl text-sm font-semibold">Register</Link>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </div>
-      )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 }

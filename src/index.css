@@ -4,15 +4,20 @@
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
 
-  --color-sand: #D8B892;
-  --color-rust: #A65E2E;
-  --color-walnut: #4E342E;
-  --color-ivory: #F8F5F0;
-  --color-stone: #8B857C;
-  --color-sand-light: #EDD9BC;
-  --color-rust-dark: #7A4420;
-  --color-walnut-dark: #3A2420;
-  --color-walnut-light: #6D4C41;
+  /* ── 3 primary colors ── */
+  --color-walnut: #4E342E;       /* dark brown — main brand */
+  --color-sand: #D8B892;         /* gold/beige — accent */
+  --color-rust: #A65E2E;         /* orange-brown — CTA / highlight */
+
+  /* ── 1 neutral ── */
+  --color-ivory: #F8F5F0;        /* background */
+
+  /* ── variants of the 3 primaries (not separate colors) ── */
+  --color-stone: #8B857C;        /* walnut neutral — secondary text */
+  --color-sand-light: #EDD9BC;   /* sand lighter — borders */
+  --color-rust-dark: #7A4420;    /* rust darker */
+  --color-walnut-dark: #3A2420;  /* walnut darker */
+  --color-walnut-light: #6D4C41; /* walnut lighter */
 }
 
 * {

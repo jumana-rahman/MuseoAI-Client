@@ -369,9 +369,12 @@ export default function MuseumDetail() {
           </div>
 
           <div className="space-y-5">
-            <div className="bg-gradient-to-br from-[#4E342E] to-[#3A2420] rounded-2xl p-5 text-[#F8F5F0]">
+            <div className="bg-gradient-to-br from-[#4E342E] to-[#3A2420] rounded-2xl p-5 text-[#F8F5F0] border border-[#D8B892]/30 animate-pulse-slow">
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="w-5 h-5 text-[#D8B892]" />
+                <div className="relative">
+                  <Sparkles className="w-5 h-5 text-[#D8B892]" />
+                  <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-[#D8B892] rounded-full animate-ping" />
+                </div>
                 <span className="font-display font-semibold">AI Museum Guide</span>
               </div>
               <p className="text-[#8B857C] text-sm mb-4">Chat with an AI that knows this museum inside out — history, exhibits, tips, and more.</p>

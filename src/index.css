@@ -64,6 +64,15 @@ body {
   animation: float 6s ease-in-out infinite;
 }
 
+@keyframes pulseSlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(216, 184, 146, 0); }
+  50% { box-shadow: 0 0 20px 4px rgba(216, 184, 146, 0.3); }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 3s ease-in-out infinite;
+}
+
 .font-display {
   font-family: 'Playfair Display', Georgia, serif;
 }

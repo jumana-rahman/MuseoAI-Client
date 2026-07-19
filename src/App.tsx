@@ -63,7 +63,7 @@ function AppRoutes() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
-          <Route path="/recommendations" element={<ProtectedRoute><Recommendations /></ProtectedRoute>} />
+          <Route path="/recommendations" element={<Recommendations />} />
           <Route path="/items/add" element={<ProtectedRoute><Navigate to="/dashboard/add-guide" replace /></ProtectedRoute>} />
           <Route path="/items/manage" element={<ProtectedRoute><Navigate to="/dashboard/my-guides" replace /></ProtectedRoute>} />
           <Route path="/dashboard/manage-guides" element={<ProtectedRoute><Navigate to="/dashboard/my-guides" replace /></ProtectedRoute>} />

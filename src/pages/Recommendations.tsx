@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Sparkles, RefreshCw, Star, MapPin, Ticket, ThumbsUp, ThumbsDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAIRecommendations, useRecordSignal } from "../hooks/useAI";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "sonner";
 
 const INTERESTS = ["Art & Painting", "Ancient History", "Science & Technology", "Natural History", "Military History", "Architecture", "World Cultures", "Modern Art"];
@@ -12,6 +13,8 @@ const BUDGETS = ["Free only", "Budget (under $15)", "Mid-range ($15-$25)", "Prem
 const DURATIONS = ["Half-day", "Full day", "Weekend", "Week+"];
 
 export default function Recommendations() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     interests: [] as string[],
     country: "Any",
@@ -32,6 +35,11 @@ export default function Recommendations() {
   };
 
   const generate = async () => {
+    if (!user) {
+      toast.error("Please sign in to get AI recommendations.");
+      navigate("/login", { state: { from: "/recommendations" } });
+      return;
+    }
     const budgetMap: Record<string, number | undefined> = {
       "Free only": 0,
       "Budget (under $15)": 15,

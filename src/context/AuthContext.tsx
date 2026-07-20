@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     toast.success("Redirecting to Google...");
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: `${clientUrl}/`,
+      callbackURL: `${clientUrl}/?signin=google`,
     });
   };
 

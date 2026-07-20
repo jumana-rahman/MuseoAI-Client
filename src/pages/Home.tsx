@@ -11,6 +11,7 @@ import {
   Palette, Landmark, FlaskConical, Swords, Lightbulb, Smile, Leaf
 } from "lucide-react";
 import { apiRequest } from "../lib/api";
+import { toast } from "sonner";
 
 const CATEGORIES_WITH_ICONS: Record<string, React.ReactNode> = {
   Art: <Palette className="w-10 h-10" />,
@@ -56,6 +57,15 @@ const COLORS = ["#D8B892", "#A65E2E", "#4E342E", "#8B857C", "#EDD9BC", "#6D4C41"
 export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("signin") === "google") {
+      toast.success("Signed in with Google successfully!");
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
+
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [testimonialIdx, setTestimonialIdx] = useState(0);

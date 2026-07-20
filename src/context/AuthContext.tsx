@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { authClient, useSession } from "../lib/auth-client";
+import { toast } from "sonner";
 
 export type User = {
   id: string;
@@ -63,6 +64,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginGoogle = async () => {
     const clientUrl = window.location.origin;
+    toast.success("Redirecting to Google...");
     await authClient.signIn.social({
       provider: "google",
       callbackURL: `${clientUrl}/`,
@@ -89,6 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     await authClient.signOut();
+    toast.success("Logged out successfully.");
   };
 
   const updateProfile = async (data: Partial<User>) => {

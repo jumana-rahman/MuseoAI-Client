@@ -22,7 +22,7 @@ export default function Register() {
     setLoading(true);
     const ok = await register(form.name, form.email, form.password);
     setLoading(false);
-    if (ok) navigate(from, { replace: true });
+    if (ok) navigate("/", { replace: true });
     else toast.error("Registration failed. Check console for details, or try a different email.");
   };
 

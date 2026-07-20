@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const clientUrl = window.location.origin;
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: `${clientUrl}/dashboard`,
+      callbackURL: `${clientUrl}/`,
     });
   };
 
